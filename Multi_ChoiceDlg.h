@@ -4,8 +4,9 @@
 
 #pragma once
 #include "afxwin.h"
-
-
+#include <vector>
+using namespace std;
+class CModelChoice;
 // CMulti_ChoiceDlg ¶Ô»°¿ò
 class CMulti_ChoiceDlg : public CDialogEx
 {
@@ -49,4 +50,5 @@ public:
 	CStatic m_lbl_choice4;
 	CButton m_btn_next;
 	CButton m_btn_prev;
+	vector<CModelChoice*> m_list;
 };

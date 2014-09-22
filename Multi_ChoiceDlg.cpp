@@ -177,6 +177,8 @@ BOOL CMulti_ChoiceDlg::OnInitDialog()
 	Util::setControlPosition(&m_btn_next,this,rect_window.right-width_btn_next-15,rect_choice.bottom+INTERVAL_CHOICE);	
 	//Util::LOG(L"%d",rect_choice.bottom);
 	//Util::LOG(L"(%d,%d) (%d,%d)",rect.left,rect.top,rect.right,rect.bottom);
+	OnMenuLoad();
+	
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -272,4 +274,54 @@ void CMulti_ChoiceDlg::OnMenuSave()
 void CMulti_ChoiceDlg::OnMenuLoad()
 {
 	// TODO: 在此添加命令处理程序代码
+	/*CString strFilter = _T("xml files(*.xml)|*.xml||");
+	CFileDialog FileDlg(true,NULL,NULL,
+						OFN_HIDEREADONLY|OFN_OVERWRITEPROMPT,
+						strFilter,this);
+	if(FileDlg.DoModal()!=IDOK) return;*/
+	//CString strFileName = FileDlg.GetPathName();
+	CString strFileName;
+
+	strFileName = L"C:\\Users\\john\\Desktop\\2013_10_new.xml";
+	CMarkup xml;
+	BOOL flag = xml.Load(strFileName);
+	Util::LOG(L"flag=%d",flag);
+	 
+	xml.FindElem(L"root");
+	xml.IntoElem();
+
+	while(xml.FindElem(L"question"))
+	{
+	    CString title = xml.GetAttrib(L"title");
+		CString answer = xml.GetAttrib(L"answer");
+		CString note = xml.GetAttrib(L"note");
+		CModelChoice *model = new CModelChoice;
+
+		model->m_title = title;
+		model->m_answer = answer;
+		model->m_note = note;
+	
+
+		Util::LOG(L"\ntitle=%s answer=%s note=%s\n",title,answer,note);
+
+		
+
+		xml.IntoElem();
+			
+		xml.ResetMainPos();
+		int i=0;
+		while(xml.FindElem(L"choice")){
+			CString choice=xml.GetData();
+			model->m_choices[i] = choice;
+			Util::LOG(L"\nchoice%d=%s\n",i,choice);
+			++i;
+		}		
+		m_list.push_back(model);
+
+		xml.OutOfElem();
+
+	}
+	xml.OutOfElem();
+
+
 }

@@ -57,7 +57,8 @@
 
 
 #include "Util.h"
-
+#include "Markup.h"
+#include "ModelChoice.h"
 #define INTERVAL_CHOICE 20
 
 #define VERSION L"Ñ¡ÔñÌâ±à¼­Æ÷£¬1.0 °æ"
