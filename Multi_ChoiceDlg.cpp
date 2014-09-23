@@ -7,7 +7,7 @@
 #include "Multi_ChoiceDlg.h"
 #include "afxdialogex.h"
 #include "afxwin.h"
-
+#include "NoteEditorDlg.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -80,6 +80,14 @@ void CMulti_ChoiceDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC_CHOICE4, m_lbl_choice4);
 	DDX_Control(pDX, IDC_BTN_NEXT, m_btn_next);
 	DDX_Control(pDX, IDC_BTN_PREV, m_btn_prev);
+	DDX_Control(pDX, IDC_RADIO_ANSWER1, m_radio_answer1);
+	DDX_Control(pDX, IDC_RADIO_ANSWER2, m_radio_answer2);
+	DDX_Control(pDX, IDC_RADIO_ANSWER3, m_radio_answer3);
+	DDX_Control(pDX, IDC_RADIO_ANSWER4, m_radio_answer4);
+	DDX_Control(pDX, IDC_BTN_NOTE, m_btn_note);
+	DDX_Control(pDX, IDC_STATIC_NO, m_lbl_no);
+	DDX_Control(pDX, IDC_BTN_NEW, m_btn_new);
+	DDX_Control(pDX, IDC_BTN_DEL, m_btn_del);
 }
 
 
@@ -90,6 +98,16 @@ BEGIN_MESSAGE_MAP(CMulti_ChoiceDlg, CDialogEx)
 	ON_COMMAND(ID__MENU_EXIT, &CMulti_ChoiceDlg::OnMenuExit)	
 	ON_COMMAND(ID_MENU_SAVE, &CMulti_ChoiceDlg::OnMenuSave)
 	ON_COMMAND(ID_MENU_LOAD, &CMulti_ChoiceDlg::OnMenuLoad)
+	ON_BN_CLICKED(IDC_BTN_PREV, &CMulti_ChoiceDlg::OnBnClickedBtnPrev)
+	ON_BN_CLICKED(IDC_BTN_NEXT, &CMulti_ChoiceDlg::OnBnClickedBtnNext)
+	ON_BN_CLICKED(IDC_BTN_NOTE, &CMulti_ChoiceDlg::OnBnClickedBtnNote)
+	ON_COMMAND(ID__MENU_NEW, &CMulti_ChoiceDlg::OnMenuNew)
+	ON_BN_CLICKED(IDC_RADIO_ANSWER1, &CMulti_ChoiceDlg::OnBnClickedRadioAnswer1)
+	ON_BN_CLICKED(IDC_RADIO_ANSWER2, &CMulti_ChoiceDlg::OnBnClickedRadioAnswer2)
+	ON_BN_CLICKED(IDC_RADIO_ANSWER3, &CMulti_ChoiceDlg::OnBnClickedRadioAnswer3)
+	ON_BN_CLICKED(IDC_RADIO_ANSWER4, &CMulti_ChoiceDlg::OnBnClickedRadioAnswer4)
+	ON_BN_CLICKED(IDC_BTN_NEW, &CMulti_ChoiceDlg::OnBnClickedBtnNew)
+	ON_BN_CLICKED(IDC_BTN_DEL, &CMulti_ChoiceDlg::OnBnClickedBtnDel)
 END_MESSAGE_MAP()
 
 
@@ -141,33 +159,47 @@ BOOL CMulti_ChoiceDlg::OnInitDialog()
 	CRect rect_lbl_title = Util::getControlPosition(&m_lbl_title,this);
 	Util::setControlPosition(&m_lbl_title,this,rect_lbl_title.left,rect_edit_title.top);
 
+	Util::setControlPosition(&m_lbl_no,this,rect_lbl_title.left,rect_lbl_title.bottom+10);
+
 	CRect rect_choice;
 	//Choice1
-	Util::setControlPosition(&m_edit_choice1,this,rect_edit_title.left,rect_edit_title.bottom+INTERVAL_CHOICE);
+	Util::setControlPosition(&m_edit_choice1,this,rect_edit_title.left,rect_edit_title.bottom+INTERVAL_CHOICE);	
 	rect_choice = Util::getControlPosition(&m_edit_choice1,this);
 
 	Util::setControlPosition(&m_lbl_choice1,this,rect_lbl_title.left,rect_choice.top);
-
+	//Answer
+	Util::setControlPosition(&m_radio_answer1,this,rect_choice.right+INTERVAL_ANSWER,rect_choice.top);
 
 	//Choice2
 	Util::setControlPosition(&m_edit_choice2,this,rect_edit_title.left,rect_choice.bottom+INTERVAL_CHOICE);	
 	rect_choice = Util::getControlPosition(&m_edit_choice2,this);
 	Util::setControlPosition(&m_lbl_choice2,this,rect_lbl_title.left,rect_choice.top);
-
+	//Answer
+	Util::setControlPosition(&m_radio_answer2,this,rect_choice.right+INTERVAL_ANSWER,rect_choice.top);
 	
 	//Choice3
 	Util::setControlPosition(&m_edit_choice3,this,rect_edit_title.left,rect_choice.bottom+INTERVAL_CHOICE);	
 	rect_choice = Util::getControlPosition(&m_edit_choice3,this);
 	Util::setControlPosition(&m_lbl_choice3,this,rect_lbl_title.left,rect_choice.top);
-	
+	//Answer
+	Util::setControlPosition(&m_radio_answer3,this,rect_choice.right+INTERVAL_ANSWER,rect_choice.top);
 
 	//Choice4
 	Util::setControlPosition(&m_edit_choice4,this,rect_edit_title.left,rect_choice.bottom+INTERVAL_CHOICE);	
 	rect_choice = Util::getControlPosition(&m_edit_choice4,this);
 	Util::setControlPosition(&m_lbl_choice4,this,rect_lbl_title.left,rect_choice.top);
-
+	//Answer
+	Util::setControlPosition(&m_radio_answer4,this,rect_choice.right+INTERVAL_ANSWER,rect_choice.top);
 	//Prev Button
 	Util::setControlPosition(&m_btn_prev,this,0,rect_choice.bottom+INTERVAL_CHOICE);	
+
+	//New Button
+	CRect rect_btn_new = Util::getControlPosition(&m_btn_new,this);
+	Util::setControlPosition(&m_btn_new,this,rect_btn_new.left,rect_choice.bottom+INTERVAL_CHOICE);	
+
+	//Del Button
+	CRect rect_btn_del = Util::getControlPosition(&m_btn_del,this);
+	Util::setControlPosition(&m_btn_del,this,rect_btn_del.left,rect_choice.bottom+INTERVAL_CHOICE);	
 
 	CRect rect_window;
 	GetWindowRect(&rect_window);
@@ -177,7 +209,15 @@ BOOL CMulti_ChoiceDlg::OnInitDialog()
 	Util::setControlPosition(&m_btn_next,this,rect_window.right-width_btn_next-15,rect_choice.bottom+INTERVAL_CHOICE);	
 	//Util::LOG(L"%d",rect_choice.bottom);
 	//Util::LOG(L"(%d,%d) (%d,%d)",rect.left,rect.top,rect.right,rect.bottom);
-	OnMenuLoad();
+
+	m_current_index = 0;
+
+	CRect rect_radio1 = Util::getControlPosition(&m_radio_answer1,this);
+	Util::setControlPosition(&m_btn_note,this,rect_radio1.right+10,rect_radio1.top);
+
+
+	m_oper_type = OperationType::New;
+	//OnMenuLoad();
 	
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -247,7 +287,11 @@ BOOL CMulti_ChoiceDlg::PreTranslateMessage(MSG* pMsg)
 
 		case 'A':
 		if (bCtrl){
-		//	m_edit_excel_path.SetSel(0,-1);
+			m_edit_title.SetSel(0,-1);
+			m_edit_choice1.SetSel(0,-1);
+			m_edit_choice2.SetSel(0,-1);
+			m_edit_choice3.SetSel(0,-1);
+			m_edit_choice4.SetSel(0,-1);
 		}
 		break;
 		}
@@ -268,28 +312,75 @@ void CMulti_ChoiceDlg::OnMenuExit()
 void CMulti_ChoiceDlg::OnMenuSave()
 {
 	// TODO: 在此添加命令处理程序代码
+	if(m_oper_type == OperationType::New)
+	{
+		CString strFilter = _T("xml files(*.xml)|*.xml||");
+		CFileDialog FileDlg(false,NULL,NULL,
+						OFN_HIDEREADONLY|OFN_OVERWRITEPROMPT,
+						strFilter,this);
+		if(FileDlg.DoModal()!=IDOK) return;
+			m_strFileName = FileDlg.GetPathName();
+
+			CString strFileExt = FileDlg.GetFileExt();
+			if(strFileExt == "")
+			{
+				m_strFileName.Append(L".xls");
+			}
+	}
+
+	m_oper_type = OperationType::Save;
+	CMarkup xml;
+	xml.AddElem(L"root");
+
+	xml.IntoElem();
+
+	int size = m_list.size();
+
+	for(int i=0;i<size;i++)
+	{
+	CModelChoice* model = (CModelChoice*)m_list[i];
+
+	xml.AddElem(L"question");
+	xml.AddAttrib(L"title",model->m_title.Trim());
+	xml.AddAttrib(L"answer",model->m_answer.Trim());
+	xml.AddAttrib(L"note",model->m_note.Trim());
+
+		xml.IntoElem();;
+		xml.AddElem(L"choice",model->m_choices[0].Trim());
+		xml.AddElem(L"choice",model->m_choices[1].Trim());
+		xml.AddElem(L"choice",model->m_choices[2].Trim());
+		xml.AddElem(L"choice",model->m_choices[3].Trim());
+		xml.OutOfElem();	
+
+	}
+
+	xml.OutOfElem();
+
+	xml.Save(m_strFileName);
+	Util::LOG(L"%s",xml.GetDoc());
 }
 
 
 void CMulti_ChoiceDlg::OnMenuLoad()
 {
 	// TODO: 在此添加命令处理程序代码
-	/*CString strFilter = _T("xml files(*.xml)|*.xml||");
+	CString strFilter = _T("xml files(*.xml)|*.xml||");
 	CFileDialog FileDlg(true,NULL,NULL,
 						OFN_HIDEREADONLY|OFN_OVERWRITEPROMPT,
 						strFilter,this);
-	if(FileDlg.DoModal()!=IDOK) return;*/
-	//CString strFileName = FileDlg.GetPathName();
-	CString strFileName;
+	if(FileDlg.DoModal()!=IDOK) return;
+		m_strFileName = FileDlg.GetPathName();
 
-	strFileName = L"C:\\Users\\john\\Desktop\\2013_10_new.xml";
+	m_oper_type = OperationType::Load;
+
+	
 	CMarkup xml;
-	BOOL flag = xml.Load(strFileName);
+	BOOL flag = xml.Load(m_strFileName);
 	Util::LOG(L"flag=%d",flag);
 	 
 	xml.FindElem(L"root");
 	xml.IntoElem();
-
+	m_list.clear();
 	while(xml.FindElem(L"question"))
 	{
 	    CString title = xml.GetAttrib(L"title");
@@ -323,5 +414,176 @@ void CMulti_ChoiceDlg::OnMenuLoad()
 	}
 	xml.OutOfElem();
 
+	updateQuestionUI();
+}
+void CMulti_ChoiceDlg::updateQuestionUI()
+{
+	int maxsize = m_list.size();
+	if(m_current_index>= maxsize){
+		--m_current_index;
+	}
+	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
+	m_edit_title.SetWindowTextW(model->m_title);
+	m_edit_choice1.SetWindowTextW(model->m_choices[0]);
+	m_edit_choice2.SetWindowTextW(model->m_choices[1]);
+	m_edit_choice3.SetWindowTextW(model->m_choices[2]);
+	m_edit_choice4.SetWindowTextW(model->m_choices[3]);
+	
+	if(model->m_choices[0].Trim()==model->m_answer.Trim())
+	{
+		m_radio_answer1.SetCheck(TRUE);
 
+		m_radio_answer2.SetCheck(FALSE);
+		m_radio_answer3.SetCheck(FALSE);
+		m_radio_answer4.SetCheck(FALSE);
+	}
+	else if(model->m_choices[1].Trim()==model->m_answer.Trim())
+	{
+		m_radio_answer2.SetCheck(TRUE);
+
+		m_radio_answer1.SetCheck(FALSE);
+		m_radio_answer3.SetCheck(FALSE);
+		m_radio_answer4.SetCheck(FALSE);
+	}
+	else if(model->m_choices[2].Trim()==model->m_answer.Trim())
+	{
+		m_radio_answer3.SetCheck(TRUE);
+
+		m_radio_answer2.SetCheck(FALSE);
+		m_radio_answer1.SetCheck(FALSE);
+		m_radio_answer4.SetCheck(FALSE);
+	}
+	else
+	{
+		m_radio_answer4.SetCheck(TRUE);
+
+		m_radio_answer2.SetCheck(FALSE);
+		m_radio_answer3.SetCheck(FALSE);
+		m_radio_answer1.SetCheck(FALSE);
+	}
+	CString tmp;
+	tmp.Format(L"%d/%d",m_current_index+1,m_list.size());
+	m_lbl_no.SetWindowTextW(tmp);
+}
+
+void CMulti_ChoiceDlg::OnBnClickedBtnPrev()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	if( (m_current_index-1) >=0)
+	{
+		if(m_current_index == m_list.size()-1)
+	{
+	 CModelChoice* model = (CModelChoice*)m_list[m_current_index];
+	 CString tmp;
+	 m_edit_title.GetWindowTextW(tmp);
+	 model->m_title = tmp.Trim();
+
+	 m_edit_choice1.GetWindowTextW(tmp);
+	 model->m_choices[0]=tmp;
+
+	 m_edit_choice2.GetWindowTextW(tmp);
+	 model->m_choices[1]=tmp;
+
+	 m_edit_choice3.GetWindowTextW(tmp);
+	 model->m_choices[2]=tmp;
+
+	 m_edit_choice4.GetWindowTextW(tmp);
+	 model->m_choices[3]=tmp;
+	}
+
+		--m_current_index;
+		updateQuestionUI();
+	}
+
+	
+
+}
+
+
+void CMulti_ChoiceDlg::OnBnClickedBtnNext()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	int maxsize = m_list.size();
+	if( (m_current_index+1) <maxsize)
+	{
+		++m_current_index;
+		updateQuestionUI();
+	}
+}
+
+
+void CMulti_ChoiceDlg::OnBnClickedBtnNote()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
+
+	CNoteEditorDlg dlg;
+	dlg.m_str_content = model->m_note;
+	dlg.DoModal();
+
+	if(dlg.m_ok)
+	{
+		model->m_note = dlg.m_str_content;
+	}
+}
+
+
+void CMulti_ChoiceDlg::OnMenuNew()
+{
+	// TODO: 在此添加命令处理程序代码
+	m_oper_type = OperationType::New;
+}
+
+
+void CMulti_ChoiceDlg::OnBnClickedRadioAnswer1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
+	model->m_answer = model->m_choices[0];
+}
+
+
+void CMulti_ChoiceDlg::OnBnClickedRadioAnswer2()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
+	model->m_answer = model->m_choices[1];
+}
+
+
+void CMulti_ChoiceDlg::OnBnClickedRadioAnswer3()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
+	model->m_answer = model->m_choices[2];
+}
+
+
+void CMulti_ChoiceDlg::OnBnClickedRadioAnswer4()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
+	model->m_answer = model->m_choices[3];
+}
+
+
+void CMulti_ChoiceDlg::OnBnClickedBtnNew()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	
+	CModelChoice* model = new CModelChoice;
+	m_list.push_back(model);
+	m_current_index = m_list.size()-1;
+	updateQuestionUI();
+}
+
+
+void CMulti_ChoiceDlg::OnBnClickedBtnDel()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	vector<CModelChoice*>::iterator it = m_list.begin()+m_current_index;
+	
+	m_list.erase(it);	
+
+	updateQuestionUI();
 }

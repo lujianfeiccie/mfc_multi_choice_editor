@@ -7,6 +7,13 @@
 #include <vector>
 using namespace std;
 class CModelChoice;
+
+typedef enum
+{
+	New,
+	Load,
+	Save
+}OperationType;
 // CMulti_ChoiceDlg ¶Ô»°¿ò
 class CMulti_ChoiceDlg : public CDialogEx
 {
@@ -51,4 +58,29 @@ public:
 	CButton m_btn_next;
 	CButton m_btn_prev;
 	vector<CModelChoice*> m_list;
+	int m_current_index;
+	CButton m_radio_answer1;
+	CButton m_radio_answer2;
+	CButton m_radio_answer3;
+	CButton m_radio_answer4;
+	CButton m_btn_note;
+
+	void updateQuestionUI();
+	afx_msg void OnBnClickedBtnPrev();
+	afx_msg void OnBnClickedBtnNext();
+	CStatic m_lbl_no;
+	afx_msg void OnBnClickedBtnNote();
+	afx_msg void OnMenuNew();
+
+	OperationType m_oper_type;
+	afx_msg void OnBnClickedRadioAnswer1();
+	afx_msg void OnBnClickedRadioAnswer2();
+	afx_msg void OnBnClickedRadioAnswer3();
+	afx_msg void OnBnClickedRadioAnswer4();
+
+	CString m_strFileName;
+	afx_msg void OnBnClickedBtnNew();
+	afx_msg void OnBnClickedBtnDel();
+	CButton m_btn_new;
+	CButton m_btn_del;
 };
