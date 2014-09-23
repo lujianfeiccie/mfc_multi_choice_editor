@@ -13,8 +13,8 @@ public:
 	static int enc_utf8_to_unicode_one(const unsigned char* pInput, unsigned long *Unic);
 	static CString UrlEncode(CString strUnicode);
 	static bool IsExistFile(LPCWSTR pszFileName);
-	static CRect getControlPosition(CWnd* cwnd,LPVOID lpvoid);
-	static void setControlPosition(CWnd* cwnd,LPVOID lpvoid,int x,int y);
+	static CRect getControlPosition(const CWnd& cwnd,LPVOID lpvoid);
+	static void setControlPosition(CWnd& cwnd,LPVOID lpvoid,int x,int y);
 public:
  ~Util(void);
 };

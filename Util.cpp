@@ -291,14 +291,14 @@ bool Util::IsExistFile(LPCWSTR pszFileName)
 	}
 	return false;
 }
-CRect Util::getControlPosition(CWnd* cwnd,LPVOID lpvoid)
+CRect Util::getControlPosition(const CWnd& cwnd,LPVOID lpvoid)
 {
 	CRect rect;
-	cwnd->GetWindowRect(&rect);
+	cwnd.GetWindowRect(&rect);
 	((CDialogEx*)lpvoid)->ScreenToClient(&rect);
 	return rect;
 }
-void Util::setControlPosition(CWnd* cwnd,LPVOID lpvoid,int x,int y)
+void Util::setControlPosition(CWnd& cwnd,LPVOID lpvoid,int x,int y)
 {
 	CRect rect=Util::getControlPosition(cwnd,lpvoid);
 	int width = rect.right - rect.left;
@@ -307,5 +307,5 @@ void Util::setControlPosition(CWnd* cwnd,LPVOID lpvoid,int x,int y)
 	rect.top = y;
 	rect.right = x + width;
 	rect.bottom = y + height;
-	cwnd->MoveWindow(&rect);	
+	cwnd.MoveWindow(&rect);	
 }

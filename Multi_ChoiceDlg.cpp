@@ -155,65 +155,65 @@ BOOL CMulti_ChoiceDlg::OnInitDialog()
     RepositionBars(AFX_IDW_CONTROLBAR_FIRST,AFX_IDW_CONTROLBAR_LAST,AFX_IDW_CONTROLBAR_FIRST);
 
 	
-	CRect rect_edit_title = Util::getControlPosition(&m_edit_title,this);
-	CRect rect_lbl_title = Util::getControlPosition(&m_lbl_title,this);
-	Util::setControlPosition(&m_lbl_title,this,rect_lbl_title.left,rect_edit_title.top);
-
-	Util::setControlPosition(&m_lbl_no,this,rect_lbl_title.left,rect_lbl_title.bottom+10);
+	CRect rect_edit_title = Util::getControlPosition(m_edit_title,this);
+	CRect rect_lbl_title = Util::getControlPosition(m_lbl_title,this);
+	Util::setControlPosition(m_lbl_title,this,rect_lbl_title.left,rect_edit_title.top);
+	m_lbl_no.SetWindowTextW(L"");
+	Util::setControlPosition(m_lbl_no,this,rect_lbl_title.left,rect_lbl_title.bottom+10);
 
 	CRect rect_choice;
 	//Choice1
-	Util::setControlPosition(&m_edit_choice1,this,rect_edit_title.left,rect_edit_title.bottom+INTERVAL_CHOICE);	
-	rect_choice = Util::getControlPosition(&m_edit_choice1,this);
+	Util::setControlPosition(m_edit_choice1,this,rect_edit_title.left,rect_edit_title.bottom+INTERVAL_CHOICE);	
+	rect_choice = Util::getControlPosition(m_edit_choice1,this);
 
-	Util::setControlPosition(&m_lbl_choice1,this,rect_lbl_title.left,rect_choice.top);
+	Util::setControlPosition(m_lbl_choice1,this,rect_lbl_title.left,rect_choice.top);
 	//Answer
-	Util::setControlPosition(&m_radio_answer1,this,rect_choice.right+INTERVAL_ANSWER,rect_choice.top);
+	Util::setControlPosition(m_radio_answer1,this,rect_choice.right+INTERVAL_ANSWER,rect_choice.top);
 
 	//Choice2
-	Util::setControlPosition(&m_edit_choice2,this,rect_edit_title.left,rect_choice.bottom+INTERVAL_CHOICE);	
-	rect_choice = Util::getControlPosition(&m_edit_choice2,this);
-	Util::setControlPosition(&m_lbl_choice2,this,rect_lbl_title.left,rect_choice.top);
+	Util::setControlPosition(m_edit_choice2,this,rect_edit_title.left,rect_choice.bottom+INTERVAL_CHOICE);	
+	rect_choice = Util::getControlPosition(m_edit_choice2,this);
+	Util::setControlPosition(m_lbl_choice2,this,rect_lbl_title.left,rect_choice.top);
 	//Answer
-	Util::setControlPosition(&m_radio_answer2,this,rect_choice.right+INTERVAL_ANSWER,rect_choice.top);
+	Util::setControlPosition(m_radio_answer2,this,rect_choice.right+INTERVAL_ANSWER,rect_choice.top);
 	
 	//Choice3
-	Util::setControlPosition(&m_edit_choice3,this,rect_edit_title.left,rect_choice.bottom+INTERVAL_CHOICE);	
-	rect_choice = Util::getControlPosition(&m_edit_choice3,this);
-	Util::setControlPosition(&m_lbl_choice3,this,rect_lbl_title.left,rect_choice.top);
+	Util::setControlPosition(m_edit_choice3,this,rect_edit_title.left,rect_choice.bottom+INTERVAL_CHOICE);	
+	rect_choice = Util::getControlPosition(m_edit_choice3,this);
+	Util::setControlPosition(m_lbl_choice3,this,rect_lbl_title.left,rect_choice.top);
 	//Answer
-	Util::setControlPosition(&m_radio_answer3,this,rect_choice.right+INTERVAL_ANSWER,rect_choice.top);
+	Util::setControlPosition(m_radio_answer3,this,rect_choice.right+INTERVAL_ANSWER,rect_choice.top);
 
 	//Choice4
-	Util::setControlPosition(&m_edit_choice4,this,rect_edit_title.left,rect_choice.bottom+INTERVAL_CHOICE);	
-	rect_choice = Util::getControlPosition(&m_edit_choice4,this);
-	Util::setControlPosition(&m_lbl_choice4,this,rect_lbl_title.left,rect_choice.top);
+	Util::setControlPosition(m_edit_choice4,this,rect_edit_title.left,rect_choice.bottom+INTERVAL_CHOICE);	
+	rect_choice = Util::getControlPosition(m_edit_choice4,this);
+	Util::setControlPosition(m_lbl_choice4,this,rect_lbl_title.left,rect_choice.top);
 	//Answer
-	Util::setControlPosition(&m_radio_answer4,this,rect_choice.right+INTERVAL_ANSWER,rect_choice.top);
+	Util::setControlPosition(m_radio_answer4,this,rect_choice.right+INTERVAL_ANSWER,rect_choice.top);
 	//Prev Button
-	Util::setControlPosition(&m_btn_prev,this,0,rect_choice.bottom+INTERVAL_CHOICE);	
+	Util::setControlPosition(m_btn_prev,this,0,rect_choice.bottom+INTERVAL_CHOICE);	
 
 	//New Button
-	CRect rect_btn_new = Util::getControlPosition(&m_btn_new,this);
-	Util::setControlPosition(&m_btn_new,this,rect_btn_new.left,rect_choice.bottom+INTERVAL_CHOICE);	
+	CRect rect_btn_new = Util::getControlPosition(m_btn_new,this);
+	Util::setControlPosition(m_btn_new,this,rect_btn_new.left,rect_choice.bottom+INTERVAL_CHOICE);	
 
 	//Del Button
-	CRect rect_btn_del = Util::getControlPosition(&m_btn_del,this);
-	Util::setControlPosition(&m_btn_del,this,rect_btn_del.left,rect_choice.bottom+INTERVAL_CHOICE);	
+	CRect rect_btn_del = Util::getControlPosition(m_btn_del,this);
+	Util::setControlPosition(m_btn_del,this,rect_btn_del.left,rect_choice.bottom+INTERVAL_CHOICE);	
 
 	CRect rect_window;
 	GetWindowRect(&rect_window);
 	//Next Button
-	CRect rect_btn_next = Util::getControlPosition(&m_btn_next,this);
+	CRect rect_btn_next = Util::getControlPosition(m_btn_next,this);
 	int width_btn_next = rect_btn_next.right - rect_btn_next.left;
-	Util::setControlPosition(&m_btn_next,this,rect_window.right-width_btn_next-15,rect_choice.bottom+INTERVAL_CHOICE);	
+	Util::setControlPosition(m_btn_next,this,rect_window.right-width_btn_next-15,rect_choice.bottom+INTERVAL_CHOICE);	
 	//Util::LOG(L"%d",rect_choice.bottom);
 	//Util::LOG(L"(%d,%d) (%d,%d)",rect.left,rect.top,rect.right,rect.bottom);
 
 	m_current_index = 0;
 
-	CRect rect_radio1 = Util::getControlPosition(&m_radio_answer1,this);
-	Util::setControlPosition(&m_btn_note,this,rect_radio1.right+10,rect_radio1.top);
+	CRect rect_radio1 = Util::getControlPosition(m_radio_answer1,this);
+	Util::setControlPosition(m_btn_note,this,rect_radio1.right+10,rect_radio1.top);
 
 
 	m_oper_type = OperationType::New;
