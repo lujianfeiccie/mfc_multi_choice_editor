@@ -12,7 +12,8 @@ typedef enum
 {
 	New,
 	Load,
-	Save
+	Save,
+	Normal
 }OperationType;
 // CMulti_ChoiceDlg ¶Ô»°¿ò
 class CMulti_ChoiceDlg : public CDialogEx
@@ -83,4 +84,13 @@ public:
 	afx_msg void OnBnClickedBtnDel();
 	CButton m_btn_new;
 	CButton m_btn_del;
+
+	void setEnable(BOOL enable);
+	afx_msg void OnEnChangeEditTitle();
+	afx_msg void OnEnChangeEditChoice1();
+	afx_msg void OnEnChangeEditChoice2();
+	afx_msg void OnEnChangeEditChoice3();
+	afx_msg void OnEnChangeEditChoice4();
+	void SendMessageStatus(MSG_TYPE type,CString msg=L"");
+	LONG OnMessageReceive(WPARAM wParam,LPARAM lParam);
 };

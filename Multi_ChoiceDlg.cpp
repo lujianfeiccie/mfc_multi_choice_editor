@@ -108,6 +108,12 @@ BEGIN_MESSAGE_MAP(CMulti_ChoiceDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO_ANSWER4, &CMulti_ChoiceDlg::OnBnClickedRadioAnswer4)
 	ON_BN_CLICKED(IDC_BTN_NEW, &CMulti_ChoiceDlg::OnBnClickedBtnNew)
 	ON_BN_CLICKED(IDC_BTN_DEL, &CMulti_ChoiceDlg::OnBnClickedBtnDel)
+	ON_EN_CHANGE(IDC_EDIT_TITLE, &CMulti_ChoiceDlg::OnEnChangeEditTitle)
+	ON_EN_CHANGE(IDC_EDIT_CHOICE1, &CMulti_ChoiceDlg::OnEnChangeEditChoice1)
+	ON_EN_CHANGE(IDC_EDIT_CHOICE2, &CMulti_ChoiceDlg::OnEnChangeEditChoice2)
+	ON_EN_CHANGE(IDC_EDIT_CHOICE3, &CMulti_ChoiceDlg::OnEnChangeEditChoice3)
+	ON_EN_CHANGE(IDC_EDIT_CHOICE4, &CMulti_ChoiceDlg::OnEnChangeEditChoice4)
+	ON_MESSAGE(WM_MSG_STATUS,&CMulti_ChoiceDlg::OnMessageReceive)
 END_MESSAGE_MAP()
 
 
@@ -216,7 +222,8 @@ BOOL CMulti_ChoiceDlg::OnInitDialog()
 	Util::setControlPosition(m_btn_note,this,rect_radio1.right+10,rect_radio1.top);
 
 
-	m_oper_type = OperationType::New;
+	m_oper_type = OperationType::Normal;
+	setEnable(FALSE);
 	//OnMenuLoad();
 	
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -303,6 +310,13 @@ return CDialog::PreTranslateMessage(pMsg);
 void CMulti_ChoiceDlg::OnMenuExit()
 {
 	// TODO: 在此添加命令处理程序代码
+	if(m_oper_type == OperationType::New)
+	{
+		if(IDOK == MessageBox(L"需要保存刚才的更改?",L"提示",MB_OKCANCEL))
+		{
+			OnMenuSave();
+		}
+	}
 	CDialog::OnCancel();
 }
 
@@ -324,12 +338,13 @@ void CMulti_ChoiceDlg::OnMenuSave()
 			CString strFileExt = FileDlg.GetFileExt();
 			if(strFileExt == "")
 			{
-				m_strFileName.Append(L".xls");
+				m_strFileName.Append(L".xml");
 			}
 	}
-
+	SendMessageStatus(MSG_TYPE::MSG_Processing);
 	m_oper_type = OperationType::Save;
 	CMarkup xml;
+	xml.SetDoc(L"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
 	xml.AddElem(L"root");
 
 	xml.IntoElem();
@@ -357,6 +372,7 @@ void CMulti_ChoiceDlg::OnMenuSave()
 	xml.OutOfElem();
 
 	xml.Save(m_strFileName);
+	SendMessageStatus(MSG_TYPE::MSG_Finish);
 	Util::LOG(L"%s",xml.GetDoc());
 }
 
@@ -371,8 +387,9 @@ void CMulti_ChoiceDlg::OnMenuLoad()
 	if(FileDlg.DoModal()!=IDOK) return;
 		m_strFileName = FileDlg.GetPathName();
 
+	SendMessageStatus(MSG_TYPE::MSG_Loading);
 	m_oper_type = OperationType::Load;
-
+	setEnable(TRUE);
 	
 	CMarkup xml;
 	BOOL flag = xml.Load(m_strFileName);
@@ -415,6 +432,7 @@ void CMulti_ChoiceDlg::OnMenuLoad()
 	xml.OutOfElem();
 
 	updateQuestionUI();
+	SendMessageStatus(MSG_TYPE::MSG_Finish);
 }
 void CMulti_ChoiceDlg::updateQuestionUI()
 {
@@ -531,7 +549,30 @@ void CMulti_ChoiceDlg::OnBnClickedBtnNote()
 void CMulti_ChoiceDlg::OnMenuNew()
 {
 	// TODO: 在此添加命令处理程序代码
+	if(m_oper_type == OperationType::New || m_oper_type == OperationType::Load)
+	{
+		switch(MessageBox(L"需要保存之前的更改?",L"提示",MB_YESNOCANCEL))
+		{
+		case IDOK:
+			{
+				OnMenuSave();
+			}
+			break;
+		case IDNO:
+			{
+			}
+			break;
+		case IDCANCEL:
+			{
+				return;
+			}
+			break;
+		}
+	   
+	}	
+	OnBnClickedBtnNew();	   
 	m_oper_type = OperationType::New;
+	setEnable(TRUE); 
 }
 
 
@@ -586,4 +627,130 @@ void CMulti_ChoiceDlg::OnBnClickedBtnDel()
 	m_list.erase(it);	
 
 	updateQuestionUI();
+}
+void CMulti_ChoiceDlg::setEnable(BOOL enable)
+{
+	m_edit_title.EnableWindow(enable);
+	m_edit_choice1.EnableWindow(enable);
+	m_edit_choice2.EnableWindow(enable);
+	m_edit_choice3.EnableWindow(enable);
+	m_edit_choice4.EnableWindow(enable);
+	m_btn_del.EnableWindow(enable);
+	m_btn_new.EnableWindow(enable);
+	m_btn_next.EnableWindow(enable);
+	m_btn_note.EnableWindow(enable);
+	m_btn_prev.EnableWindow(enable);	
+}
+
+void CMulti_ChoiceDlg::OnEnChangeEditTitle()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
+	CString title;
+	m_edit_title.GetWindowTextW(title);
+	model->m_title = title;
+}
+
+
+void CMulti_ChoiceDlg::OnEnChangeEditChoice1()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
+	CString choice;
+	m_edit_choice1.GetWindowTextW(choice);
+	model->m_choices[0] = choice;
+}
+
+
+void CMulti_ChoiceDlg::OnEnChangeEditChoice2()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
+	CString choice;
+	m_edit_choice2.GetWindowTextW(choice);
+	model->m_choices[1] = choice;
+}
+
+
+void CMulti_ChoiceDlg::OnEnChangeEditChoice3()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
+	CString choice;
+	m_edit_choice3.GetWindowTextW(choice);
+	model->m_choices[2] = choice;
+}
+
+
+void CMulti_ChoiceDlg::OnEnChangeEditChoice4()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
+	CString choice;
+	m_edit_choice4.GetWindowTextW(choice);
+	model->m_choices[3] = choice;
+}
+void CMulti_ChoiceDlg::SendMessageStatus(MSG_TYPE type,CString msg)
+{
+	SendMessage(WM_MSG_STATUS,type,(LPARAM)msg.GetBuffer());
+	msg.ReleaseBuffer();
+}
+LONG CMulti_ChoiceDlg::OnMessageReceive(WPARAM wParam,LPARAM lParam)
+{
+	CString msg = (TCHAR*)lParam;
+	switch(wParam)
+	{	
+	case MSG_TYPE::MSG_Processing:
+		{
+			m_statusbar_status.SetPaneText(0,L"进行中");
+			setEnable(FALSE);
+		}
+		break;
+	case MSG_TYPE::MSG_Finish:
+		{
+			setEnable(TRUE);
+
+			m_statusbar_status.SetPaneText(0,L"完成");
+			MessageBox(L"成功",L"提示");
+
+		}
+		break;
+	case MSG_TYPE::MSG_Loading:
+		{
+		    m_statusbar_status.SetPaneText(0,L"处理中");
+			setEnable(FALSE);
+		}
+		break;	
+	case MSG_TYPE::MSG_Other:
+		{
+			m_statusbar_status.SetPaneText(0,msg);
+		}
+		break;
+	}	
+	return 0;
 }

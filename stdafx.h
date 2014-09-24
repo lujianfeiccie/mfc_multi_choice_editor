@@ -63,3 +63,14 @@
 #define INTERVAL_ANSWER 20
 
 #define VERSION L"Ñ¡ÔñÌâ±à¼­Æ÷£¬1.0 °æ"
+
+const int WM_MSG_STATUS = WM_USER+100;
+enum MSG_TYPE
+{
+	MSG_Processing,
+	MSG_Finish,
+	MSG_FinishParagraphProcessing,
+	MSG_Loading,
+	MSG_XML_PATH_Empty,
+	MSG_Other
+};
