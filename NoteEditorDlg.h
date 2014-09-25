@@ -25,4 +25,5 @@ public:
 	CEdit m_edit_content;
 	afx_msg void OnBnClickedBtnOk();
 	afx_msg void OnBnClickedBtnCancel();
+	afx_msg void OnBnClickedBtnInsertReturn();
 };

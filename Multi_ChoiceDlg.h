@@ -93,4 +93,6 @@ public:
 	afx_msg void OnEnChangeEditChoice4();
 	void SendMessageStatus(MSG_TYPE type,CString msg=L"");
 	LONG OnMessageReceive(WPARAM wParam,LPARAM lParam);
+	virtual void OnClose();
+		
 };

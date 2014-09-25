@@ -114,6 +114,8 @@ BEGIN_MESSAGE_MAP(CMulti_ChoiceDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_CHOICE3, &CMulti_ChoiceDlg::OnEnChangeEditChoice3)
 	ON_EN_CHANGE(IDC_EDIT_CHOICE4, &CMulti_ChoiceDlg::OnEnChangeEditChoice4)
 	ON_MESSAGE(WM_MSG_STATUS,&CMulti_ChoiceDlg::OnMessageReceive)
+	ON_WM_CLOSE()	
+	
 END_MESSAGE_MAP()
 
 
@@ -142,7 +144,7 @@ BOOL CMulti_ChoiceDlg::OnInitDialog()
 			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
 		}
 	}
-
+	
 	// 设置此对话框的图标。当应用程序主窗口不是对话框时，框架将自动
 	//  执行此操作
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
@@ -225,7 +227,7 @@ BOOL CMulti_ChoiceDlg::OnInitDialog()
 	m_oper_type = OperationType::Normal;
 	setEnable(FALSE);
 	//OnMenuLoad();
-	
+	 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -289,18 +291,49 @@ BOOL CMulti_ChoiceDlg::PreTranslateMessage(MSG* pMsg)
 	// only gets here if CTRL key is pressed
 	BOOL bAlt=::GetKeyState(VK_MENU)&0x8000;
 
-	switch( pMsg->wParam )
-	{
+		switch( pMsg->wParam )
+		{
 
-		case 'A':
-		if (bCtrl){
-			m_edit_title.SetSel(0,-1);
-			m_edit_choice1.SetSel(0,-1);
-			m_edit_choice2.SetSel(0,-1);
-			m_edit_choice3.SetSel(0,-1);
-			m_edit_choice4.SetSel(0,-1);
-		}
-		break;
+			case 'A':
+			if (bCtrl)
+			{
+				m_edit_title.SetSel(0,-1);
+				m_edit_choice1.SetSel(0,-1);
+				m_edit_choice2.SetSel(0,-1);
+				m_edit_choice3.SetSel(0,-1);
+				m_edit_choice4.SetSel(0,-1);
+			}
+			break;
+			case 'N':
+			if (bCtrl)
+			{
+				OnMenuNew();
+			}
+			return TRUE;
+			case 'S':
+			if (bCtrl)
+			{
+				OnMenuSave();
+			}
+			return TRUE;
+			case 'O':
+			if (bCtrl)
+			{
+				OnMenuLoad();
+			}
+			return TRUE;
+			case VK_LEFT:
+			if (bCtrl)
+			{
+				OnBnClickedBtnPrev();
+			}
+			return TRUE;
+			case VK_RIGHT:
+			if (bCtrl)
+			{
+				OnBnClickedBtnNext();
+			}
+			return TRUE;
 		}
 	}
 	if(pMsg->message==WM_KEYDOWN && pMsg->wParam==VK_ESCAPE) return TRUE; 
@@ -343,7 +376,7 @@ void CMulti_ChoiceDlg::OnMenuSave()
 	}
 	SendMessageStatus(MSG_TYPE::MSG_Processing);
 	m_oper_type = OperationType::Save;
-	CMarkup xml;
+	CMarkup xml;	
 	xml.SetDoc(L"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
 	xml.AddElem(L"root");
 
@@ -357,7 +390,17 @@ void CMulti_ChoiceDlg::OnMenuSave()
 
 	xml.AddElem(L"question");
 	xml.AddAttrib(L"title",model->m_title.Trim());
+	
 	xml.AddAttrib(L"answer",model->m_answer.Trim());
+	
+	CString and;
+	
+	if(model->m_note.Trim().Replace(L"\r\n",L"&#x0A;&#x0D;")>0)
+	{
+
+	}
+
+	
 	xml.AddAttrib(L"note",model->m_note.Trim());
 
 		xml.IntoElem();;
@@ -370,7 +413,10 @@ void CMulti_ChoiceDlg::OnMenuSave()
 	}
 
 	xml.OutOfElem();
-
+	
+	CString result = xml.GetDoc();
+	result.Replace(L"amp;",L"");
+	xml.SetDoc(result);
 	xml.Save(m_strFileName);
 	SendMessageStatus(MSG_TYPE::MSG_Finish);
 	Util::LOG(L"%s",xml.GetDoc());
@@ -403,6 +449,7 @@ void CMulti_ChoiceDlg::OnMenuLoad()
 	    CString title = xml.GetAttrib(L"title");
 		CString answer = xml.GetAttrib(L"answer");
 		CString note = xml.GetAttrib(L"note");
+		note.Trim().Replace(L"\r\n",L"&#x0A;&#x0D;");
 		CModelChoice *model = new CModelChoice;
 
 		model->m_title = title;
@@ -430,7 +477,7 @@ void CMulti_ChoiceDlg::OnMenuLoad()
 
 	}
 	xml.OutOfElem();
-
+	m_current_index = 0;
 	updateQuestionUI();
 	SendMessageStatus(MSG_TYPE::MSG_Finish);
 }
@@ -754,3 +801,10 @@ LONG CMulti_ChoiceDlg::OnMessageReceive(WPARAM wParam,LPARAM lParam)
 	}	
 	return 0;
 }
+
+void CMulti_ChoiceDlg::OnClose()
+{
+	CDialog::OnClose();
+	m_list.clear();	
+}
+

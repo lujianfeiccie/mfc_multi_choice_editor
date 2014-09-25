@@ -31,6 +31,7 @@ void CNoteEditorDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CNoteEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_OK, &CNoteEditorDlg::OnBnClickedBtnOk)
 	ON_BN_CLICKED(IDC_BTN_CANCEL, &CNoteEditorDlg::OnBnClickedBtnCancel)
+	ON_BN_CLICKED(IDC_BTN_INSERT_RETURN, &CNoteEditorDlg::OnBnClickedBtnInsertReturn)
 END_MESSAGE_MAP()
 
 
@@ -48,6 +49,7 @@ void CNoteEditorDlg::OnBnClickedBtnOk()
 	// TODO: 在此添加控件通知处理程序代码
 	m_ok = TRUE;
 	m_edit_content.GetWindowTextW(m_str_content);
+	
 	CDialog::OnCancel();
 }
 
@@ -82,4 +84,20 @@ BOOL CNoteEditorDlg::PreTranslateMessage(MSG* pMsg)
 	if(pMsg->message==WM_KEYDOWN && pMsg->wParam==VK_ESCAPE) return TRUE; 
 
 return CDialog::PreTranslateMessage(pMsg);
+}
+
+void CNoteEditorDlg::OnBnClickedBtnInsertReturn()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	int start,end;
+	m_edit_content.GetSel(start,end);
+	CString content;
+	
+	if(start == end)
+	{
+		m_edit_content.GetWindowTextW(content);
+		content.Insert(start,L"&#x0A;&#x0D;");
+		m_edit_content.SetWindowTextW(content);
+	}
+	Util::LOG(L"GetSel=%d,%d\n",start,end);
 }
