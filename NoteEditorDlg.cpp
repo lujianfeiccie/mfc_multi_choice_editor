@@ -41,6 +41,8 @@ BOOL CNoteEditorDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 	m_ok = FALSE;
 	m_edit_content.SetWindowTextW(m_str_content);
+
+	//m_edit_content.SetSel(m_str_content.GetLength()-1,m_str_content.GetLength()-1);
     return TRUE;
 }
 
@@ -95,9 +97,11 @@ void CNoteEditorDlg::OnBnClickedBtnInsertReturn()
 	
 	if(start == end)
 	{
+		CString insertStr= L"&#x0A;&#x0D;";
 		m_edit_content.GetWindowTextW(content);
-		content.Insert(start,L"&#x0A;&#x0D;");
+		content.Insert(start,insertStr);
 		m_edit_content.SetWindowTextW(content);
+		m_edit_content.SetSel(start + insertStr.GetLength(),start + insertStr.GetLength());
 	}
 	Util::LOG(L"GetSel=%d,%d\n",start,end);
 }

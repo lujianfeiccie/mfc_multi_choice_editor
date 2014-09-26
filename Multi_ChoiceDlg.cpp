@@ -353,40 +353,22 @@ void CMulti_ChoiceDlg::OnMenuExit()
 	CDialog::OnCancel();
 }
 
-
-
-
-void CMulti_ChoiceDlg::OnMenuSave()
+UINT ThreadSave(LPVOID lPvoid)
 {
-	// TODO: 在此添加命令处理程序代码
-	if(m_oper_type == OperationType::New)
-	{
-		CString strFilter = _T("xml files(*.xml)|*.xml||");
-		CFileDialog FileDlg(false,NULL,NULL,
-						OFN_HIDEREADONLY|OFN_OVERWRITEPROMPT,
-						strFilter,this);
-		if(FileDlg.DoModal()!=IDOK) return;
-			m_strFileName = FileDlg.GetPathName();
+	CMulti_ChoiceDlg* dlg = (CMulti_ChoiceDlg*)lPvoid;
 
-			CString strFileExt = FileDlg.GetFileExt();
-			if(strFileExt == "")
-			{
-				m_strFileName.Append(L".xml");
-			}
-	}
-	SendMessageStatus(MSG_TYPE::MSG_Processing);
-	m_oper_type = OperationType::Save;
+	dlg->m_oper_type = OperationType::Save;
 	CMarkup xml;	
 	xml.SetDoc(L"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
 	xml.AddElem(L"root");
 
 	xml.IntoElem();
 
-	int size = m_list.size();
+	int size = dlg->m_list.size();
 
 	for(int i=0;i<size;i++)
 	{
-	CModelChoice* model = (CModelChoice*)m_list[i];
+	CModelChoice* model = (CModelChoice*)dlg->m_list[i];
 
 	xml.AddElem(L"question");
 	xml.AddAttrib(L"title",model->m_title.Trim());
@@ -417,9 +399,33 @@ void CMulti_ChoiceDlg::OnMenuSave()
 	CString result = xml.GetDoc();
 	result.Replace(L"amp;",L"");
 	xml.SetDoc(result);
-	xml.Save(m_strFileName);
-	SendMessageStatus(MSG_TYPE::MSG_Finish);
-	Util::LOG(L"%s",xml.GetDoc());
+	xml.Save(dlg->m_strFileName);
+	dlg->SendMessageStatus(MSG_TYPE::MSG_Finish);
+	Util::LOG(L"%s",xml.GetDoc());	
+return 0;
+}
+
+
+void CMulti_ChoiceDlg::OnMenuSave()
+{
+	// TODO: 在此添加命令处理程序代码
+	if(m_oper_type == OperationType::New)
+	{
+		CString strFilter = _T("xml files(*.xml)|*.xml||");
+		CFileDialog FileDlg(false,NULL,NULL,
+						OFN_HIDEREADONLY|OFN_OVERWRITEPROMPT,
+						strFilter,this);
+		if(FileDlg.DoModal()!=IDOK) return;
+			m_strFileName = FileDlg.GetPathName();
+
+			CString strFileExt = FileDlg.GetFileExt();
+			if(strFileExt == "")
+			{
+				m_strFileName.Append(L".xml");
+			}
+	}
+	SendMessageStatus(MSG_TYPE::MSG_Processing);
+	AfxBeginThread(ThreadSave,this);
 }
 
 
@@ -432,6 +438,7 @@ void CMulti_ChoiceDlg::OnMenuLoad()
 						strFilter,this);
 	if(FileDlg.DoModal()!=IDOK) return;
 		m_strFileName = FileDlg.GetPathName();
+		SetWindowTextW(FileDlg.GetFileName());
 
 	SendMessageStatus(MSG_TYPE::MSG_Loading);
 	m_oper_type = OperationType::Load;
@@ -669,11 +676,14 @@ void CMulti_ChoiceDlg::OnBnClickedBtnNew()
 void CMulti_ChoiceDlg::OnBnClickedBtnDel()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	if(IDOK == MessageBox(L"确定删除?",L"提示",MB_OKCANCEL))
+	{
 	vector<CModelChoice*>::iterator it = m_list.begin()+m_current_index;
 	
 	m_list.erase(it);	
 
 	updateQuestionUI();
+	}
 }
 void CMulti_ChoiceDlg::setEnable(BOOL enable)
 {
