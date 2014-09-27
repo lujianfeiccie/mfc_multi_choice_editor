@@ -377,10 +377,10 @@ UINT ThreadSave(LPVOID lPvoid)
 	
 	CString and;
 	
-	if(model->m_note.Trim().Replace(L"\r\n",L"&#x0A;&#x0D;")>0)
+	/*if(model->m_note.Trim().Replace(L"\r\n",L"&#x0A;&#x0D;")>0)
 	{
 
-	}
+	}*/
 
 	
 	xml.AddAttrib(L"note",model->m_note.Trim());
@@ -697,6 +697,11 @@ void CMulti_ChoiceDlg::setEnable(BOOL enable)
 	m_btn_next.EnableWindow(enable);
 	m_btn_note.EnableWindow(enable);
 	m_btn_prev.EnableWindow(enable);	
+	m_radio_answer1.EnableWindow(enable);
+	m_radio_answer2.EnableWindow(enable);
+	m_radio_answer3.EnableWindow(enable);
+	m_radio_answer4.EnableWindow(enable);
+
 }
 
 void CMulti_ChoiceDlg::OnEnChangeEditTitle()
@@ -726,6 +731,12 @@ void CMulti_ChoiceDlg::OnEnChangeEditChoice1()
 	CString choice;
 	m_edit_choice1.GetWindowTextW(choice);
 	model->m_choices[0] = choice;
+
+
+	if(m_radio_answer1.GetCheck()==TRUE)
+	{
+		model->m_answer = choice;
+	}
 }
 
 
@@ -741,6 +752,11 @@ void CMulti_ChoiceDlg::OnEnChangeEditChoice2()
 	CString choice;
 	m_edit_choice2.GetWindowTextW(choice);
 	model->m_choices[1] = choice;
+
+	if(m_radio_answer2.GetCheck()==TRUE)
+	{
+		model->m_answer = choice;
+	}
 }
 
 
@@ -756,6 +772,11 @@ void CMulti_ChoiceDlg::OnEnChangeEditChoice3()
 	CString choice;
 	m_edit_choice3.GetWindowTextW(choice);
 	model->m_choices[2] = choice;
+
+	if(m_radio_answer3.GetCheck()==TRUE)
+	{
+		model->m_answer = choice;
+	}
 }
 
 
@@ -771,6 +792,11 @@ void CMulti_ChoiceDlg::OnEnChangeEditChoice4()
 	CString choice;
 	m_edit_choice4.GetWindowTextW(choice);
 	model->m_choices[3] = choice;
+	
+	if(m_radio_answer4.GetCheck()==TRUE)
+	{
+		model->m_answer = choice;
+	}
 }
 void CMulti_ChoiceDlg::SendMessageStatus(MSG_TYPE type,CString msg)
 {
