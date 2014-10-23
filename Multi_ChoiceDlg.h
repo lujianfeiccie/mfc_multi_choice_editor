@@ -8,13 +8,6 @@
 using namespace std;
 class CModelChoice;
 
-typedef enum
-{
-	New,
-	Load,
-	Save,
-	Normal
-}OperationType;
 // CMulti_ChoiceDlg ¶Ô»°¿ò
 class CMulti_ChoiceDlg : public CDialogEx
 {

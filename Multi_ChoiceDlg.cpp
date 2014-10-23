@@ -8,6 +8,7 @@
 #include "afxdialogex.h"
 #include "afxwin.h"
 #include "NoteEditorDlg.h"
+#include "MainDlg.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -15,6 +16,8 @@
 UINT indicators_multi_choice_dlg[]={
 IDS_STRING_STATUS
 };
+
+
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
 class CAboutDlg : public CDialogEx

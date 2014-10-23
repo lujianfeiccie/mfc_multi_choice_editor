@@ -74,3 +74,11 @@ enum MSG_TYPE
 	MSG_XML_PATH_Empty,
 	MSG_Other
 };
+
+typedef enum
+{
+	New,
+	Load,
+	Save,
+	Normal
+}OperationType;

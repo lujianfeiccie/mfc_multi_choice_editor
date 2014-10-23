@@ -5,7 +5,7 @@
 #include "stdafx.h"
 #include "Multi_Choice.h"
 #include "Multi_ChoiceDlg.h"
-
+#include "MainDlg.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -39,6 +39,7 @@ CMulti_ChoiceApp theApp;
 
 BOOL CMulti_ChoiceApp::InitInstance()
 {
+//TODO: call AfxInitRichEdit2() to initialize richedit2 library.
 	// 如果一个运行在 Windows XP 上的应用程序清单指定要
 	// 使用 ComCtl32.dll 版本 6 或更高版本来启用可视化方式，
 	//则需要 InitCommonControlsEx()。否则，将无法创建窗口。
@@ -67,7 +68,7 @@ BOOL CMulti_ChoiceApp::InitInstance()
 	// 例如修改为公司或组织名
 	SetRegistryKey(_T("应用程序向导生成的本地应用程序"));
 
-	CMulti_ChoiceDlg dlg;
+	CMainDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)

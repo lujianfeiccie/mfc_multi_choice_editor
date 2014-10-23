@@ -99,7 +99,10 @@
     <None Include="res\Multi_Choice.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AskAnswerDlg.h" />
+    <ClInclude Include="MainDlg.h" />
     <ClInclude Include="Markup.h" />
+    <ClInclude Include="ModelAskAnswer.h" />
     <ClInclude Include="ModelChoice.h" />
     <ClInclude Include="Multi_Choice.h" />
     <ClInclude Include="Multi_ChoiceDlg.h" />
@@ -110,7 +113,10 @@
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AskAnswerDlg.cpp" />
+    <ClCompile Include="MainDlg.cpp" />
     <ClCompile Include="Markup.cpp" />
+    <ClCompile Include="ModelAskAnswer.cpp" />
     <ClCompile Include="ModelChoice.cpp" />
     <ClCompile Include="Multi_Choice.cpp" />
     <ClCompile Include="Multi_ChoiceDlg.cpp" />
