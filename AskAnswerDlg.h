@@ -44,4 +44,9 @@ public:
 	afx_msg void OnBnClickedBtnDel();
 	afx_msg void OnBnClickedBtnNext();
 	CStatic m_lbl_no;
+	CString m_strFileName;
+	void SendMessageStatus(MSG_TYPE type,CString msg=L"");
+	LONG OnMessageReceive(WPARAM wParam,LPARAM lParam);
+	afx_msg void OnEnChangeEditQuestion();
+	afx_msg void OnEnChangeEditAnswer();
 };

@@ -312,31 +312,31 @@ BOOL CMulti_ChoiceDlg::PreTranslateMessage(MSG* pMsg)
 			{
 				OnMenuNew();
 			}
-			return TRUE;
+			break;
 			case 'S':
 			if (bCtrl)
 			{
 				OnMenuSave();
 			}
-			return TRUE;
+			break;
 			case 'O':
 			if (bCtrl)
 			{
 				OnMenuLoad();
 			}
-			return TRUE;
+			break;
 			case VK_LEFT:
 			if (bCtrl)
 			{
 				OnBnClickedBtnPrev();
 			}
-			return TRUE;
+			break;
 			case VK_RIGHT:
 			if (bCtrl)
 			{
 				OnBnClickedBtnNext();
 			}
-			return TRUE;
+			break;
 		}
 	}
 	if(pMsg->message==WM_KEYDOWN && pMsg->wParam==VK_ESCAPE) return TRUE; 
@@ -411,24 +411,24 @@ return 0;
 
 void CMulti_ChoiceDlg::OnMenuSave()
 {
-	// TODO: 在此添加命令处理程序代码
-	if(m_oper_type == OperationType::New)
-	{
-		CString strFilter = _T("xml files(*.xml)|*.xml||");
-		CFileDialog FileDlg(false,NULL,NULL,
-						OFN_HIDEREADONLY|OFN_OVERWRITEPROMPT,
-						strFilter,this);
-		if(FileDlg.DoModal()!=IDOK) return;
-			m_strFileName = FileDlg.GetPathName();
+		// TODO: 在此添加命令处理程序代码
+		if(m_oper_type == OperationType::New)
+		{
+			CString strFilter = _T("xml files(*.xml)|*.xml||");
+			CFileDialog FileDlg(false,NULL,NULL,
+							OFN_HIDEREADONLY|OFN_OVERWRITEPROMPT,
+							strFilter,this);
+			if(FileDlg.DoModal()!=IDOK) return;
+				m_strFileName = FileDlg.GetPathName();
 
-			CString strFileExt = FileDlg.GetFileExt();
-			if(strFileExt == "")
-			{
-				m_strFileName.Append(L".xml");
-			}
-	}
-	SendMessageStatus(MSG_TYPE::MSG_Processing);
-	AfxBeginThread(ThreadSave,this);
+				CString strFileExt = FileDlg.GetFileExt();
+				if(strFileExt == "")
+				{
+					m_strFileName.Append(L".xml");
+				}
+		}
+		SendMessageStatus(MSG_TYPE::MSG_Processing);
+		AfxBeginThread(ThreadSave,this);
 }
 
 
