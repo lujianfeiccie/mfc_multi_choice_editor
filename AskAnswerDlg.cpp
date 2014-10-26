@@ -78,10 +78,12 @@ UINT ThreadSaveInAskAnswer(LPVOID lPvoid)
 		xml.AddElem(L"text");
 		xml.AddAttrib(L"tag",L"question");
 		xml.AddAttrib(L"value",model->m_ask);
-	
+		
 		xml.AddElem(L"text");
 		xml.AddAttrib(L"tag",L"answer");
+		model->m_answer.Replace(L"\r\n",L"&#x0A;");
 		xml.AddAttrib(L"value",model->m_answer);
+		//Util::LOG(L"answer=%s",model->m_answer);
 		xml.OutOfElem();	
 
 	}
@@ -150,6 +152,8 @@ BOOL CAskAnswerDlg::OnInitDialog()
 	setEnable(FALSE);
 	m_oper_type = OperationType::Normal;
 	m_current_index = 0;
+	SetWindowTextW(L"简答题编辑器");
+	ModifyStyleEx(0,WS_EX_APPWINDOW);
 	return TRUE;
 }
 BOOL CAskAnswerDlg::PreTranslateMessage(MSG* pMsg)
@@ -170,7 +174,7 @@ BOOL CAskAnswerDlg::PreTranslateMessage(MSG* pMsg)
 			{
 				m_edit_question.SetSel(0,-1);
 				m_edit_answer.SetSel(0,-1);				
-			}
+			}			
 			break;
 			case 'N':
 			if (bCtrl)
@@ -190,6 +194,27 @@ BOOL CAskAnswerDlg::PreTranslateMessage(MSG* pMsg)
 				OnMenuOpen();
 			}
 			break;
+			/*case 'I':
+			{				
+			if(bCtrl && bAlt && m_edit_answer.IsWindowEnabled())
+			{
+				// TODO: 在此添加控件通知处理程序代码
+				int start,end;
+				m_edit_answer.GetSel(start,end);
+				CString content;
+	
+				if(start == end)
+				{
+					CString insertStr= L"&#x0A;";
+					m_edit_answer.GetWindowTextW(content);
+					content.Insert(start,insertStr);
+					m_edit_answer.SetWindowTextW(content);
+					m_edit_answer.SetSel(start + insertStr.GetLength(),start + insertStr.GetLength());
+				}
+				OnEnChangeEditAnswer();
+			 }
+			}
+			break;*/
 			case VK_LEFT:
 			if (bCtrl)
 			{
@@ -205,11 +230,12 @@ BOOL CAskAnswerDlg::PreTranslateMessage(MSG* pMsg)
 		}
 	}
 
-	if(pMsg->message==WM_KEYDOWN && pMsg->wParam==VK_ESCAPE) return TRUE; 
+	if(pMsg->message==WM_KEYDOWN && 
+	pMsg->wParam==VK_ESCAPE) return TRUE; 
 	return CDialog::PreTranslateMessage(pMsg);
 }
 void CAskAnswerDlg::setEnable(BOOL enable)
-{
+{	
 	m_edit_question.EnableWindow(enable);
 	m_edit_answer.EnableWindow(enable);
 	m_btn_prev.EnableWindow(enable);
@@ -258,6 +284,13 @@ void CAskAnswerDlg::OnMenuOpen()
 						strFilter,this);
 	if(FileDlg.DoModal()!=IDOK) return;
 		m_strFileName = FileDlg.GetPathName();
+
+		//Util::LOG(L"right=%s",m_strFileName.Right(3));
+	if(m_strFileName.Right(4)!=L".xml")
+	{
+		MessageBox(L"格式有误");
+		return;
+	}
 		SetWindowTextW(FileDlg.GetFileName());
 
 	SendMessageStatus(MSG_TYPE::MSG_Loading);
@@ -287,7 +320,10 @@ void CAskAnswerDlg::OnMenuOpen()
 			}
 			else
 			{
-				model->m_answer = xml.GetAttrib(L"value");
+				model->m_answer = xml.GetAttrib(L"value");				
+				//Util::LOG(L"length=%d",model->m_answer.GetLength());
+				Util::AddReturnFromXml(model->m_answer);				
+				//Util::LOG(L"answer=%s",model->m_answer);
 			}
 			//Util::LOG(L"tag=%s",tag);
 		}
@@ -437,6 +473,11 @@ void CAskAnswerDlg::OnEnChangeEditAnswer()
 	// TODO:  在此添加控件通知处理程序代码
 	CModelAskAnswer* model = (CModelAskAnswer*)m_list[m_current_index];
 	CString answer;
-	m_edit_question.GetWindowTextW(answer);
+	m_edit_answer.GetWindowTextW(answer);
+	//Util::LOG(L"answer=%s",answer);
 	model->m_answer = answer;
+}
+void CAskAnswerDlg::OnOK()
+{
+ return;
 }

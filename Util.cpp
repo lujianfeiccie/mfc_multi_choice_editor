@@ -310,3 +310,16 @@ void Util::setControlPosition(CWnd& cwnd,LPVOID lpvoid,int x,int y)
 	rect.bottom = y + height;
 	cwnd.MoveWindow(&rect);	
 }
+void Util::AddReturnFromXml(CString &str)
+{
+	for(int i=0;i<str.GetLength();i++)
+	{
+		if(str[i]==0x0a)
+		{
+			str.Delete(i,1);
+			str.Insert(i,L"\r\n");	
+			++i;
+		}
+		//Util::LOG(L"%x",model->m_answer[i]);
+	}	
+}

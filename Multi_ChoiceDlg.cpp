@@ -212,12 +212,12 @@ BOOL CMulti_ChoiceDlg::OnInitDialog()
 	CRect rect_btn_del = Util::getControlPosition(m_btn_del,this);
 	Util::setControlPosition(m_btn_del,this,rect_btn_del.left,rect_choice.bottom+INTERVAL_CHOICE);	
 
-	CRect rect_window;
-	GetWindowRect(&rect_window);
+	CRect rect_window;	
+	GetClientRect(&rect_window);
 	//Next Button
 	CRect rect_btn_next = Util::getControlPosition(m_btn_next,this);
 	int width_btn_next = rect_btn_next.right - rect_btn_next.left;
-	Util::setControlPosition(m_btn_next,this,rect_window.right-width_btn_next-15,rect_choice.bottom+INTERVAL_CHOICE);	
+	Util::setControlPosition(m_btn_next,this,rect_window.right-width_btn_next,rect_choice.bottom+INTERVAL_CHOICE);	
 	//Util::LOG(L"%d",rect_choice.bottom);
 	//Util::LOG(L"(%d,%d) (%d,%d)",rect.left,rect.top,rect.right,rect.bottom);
 
@@ -375,7 +375,6 @@ UINT ThreadSave(LPVOID lPvoid)
 
 	xml.AddElem(L"question");
 	xml.AddAttrib(L"title",model->m_title.Trim());
-	
 	xml.AddAttrib(L"answer",model->m_answer.Trim());
 	
 	CString and;
@@ -386,8 +385,9 @@ UINT ThreadSave(LPVOID lPvoid)
 	}*/
 
 	
+	
+	model->m_note.Replace(L"\r\n",L"&#x0A;");
 	xml.AddAttrib(L"note",model->m_note.Trim());
-
 		xml.IntoElem();;
 		xml.AddElem(L"choice",model->m_choices[0].Trim());
 		xml.AddElem(L"choice",model->m_choices[1].Trim());
@@ -404,7 +404,7 @@ UINT ThreadSave(LPVOID lPvoid)
 	xml.SetDoc(result);
 	xml.Save(dlg->m_strFileName);
 	dlg->SendMessageStatus(MSG_TYPE::MSG_Finish);
-	Util::LOG(L"%s",xml.GetDoc());	
+//	Util::LOG(L"%s",xml.GetDoc());	
 return 0;
 }
 
@@ -441,8 +441,15 @@ void CMulti_ChoiceDlg::OnMenuLoad()
 						strFilter,this);
 	if(FileDlg.DoModal()!=IDOK) return;
 		m_strFileName = FileDlg.GetPathName();
+
+	if(m_strFileName.Right(4)!=L".xml")
+	{
+		MessageBox(L"¸ñÊ½ÓÐÎó");
+		return;
+	}
 		SetWindowTextW(FileDlg.GetFileName());
 
+	
 	SendMessageStatus(MSG_TYPE::MSG_Loading);
 	m_oper_type = OperationType::Load;
 	setEnable(TRUE);
@@ -459,14 +466,17 @@ void CMulti_ChoiceDlg::OnMenuLoad()
 	    CString title = xml.GetAttrib(L"title");
 		CString answer = xml.GetAttrib(L"answer");
 		CString note = xml.GetAttrib(L"note");
-		note.Trim().Replace(L"\r\n",L"&#x0A;&#x0D;");
+		
 		CModelChoice *model = new CModelChoice;
 
 		model->m_title = title;
 		model->m_answer = answer;
 		model->m_note = note;
 	
-
+		
+		Util::AddReturnFromXml(model->m_note);
+	
+		
 		Util::LOG(L"\ntitle=%s answer=%s note=%s\n",title,answer,note);
 
 		

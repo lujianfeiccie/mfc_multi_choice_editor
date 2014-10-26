@@ -49,4 +49,6 @@ public:
 	LONG OnMessageReceive(WPARAM wParam,LPARAM lParam);
 	afx_msg void OnEnChangeEditQuestion();
 	afx_msg void OnEnChangeEditAnswer();
+	void OnOK();
+
 };
