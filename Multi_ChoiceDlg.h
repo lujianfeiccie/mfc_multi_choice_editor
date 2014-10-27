@@ -87,5 +87,6 @@ public:
 	void SendMessageStatus(MSG_TYPE type,CString msg=L"");
 	LONG OnMessageReceive(WPARAM wParam,LPARAM lParam);
 	virtual void OnClose();
-		
+	afx_msg void OnDropFiles(HDROP hDropInfo);
+	void OpenFile();
 };

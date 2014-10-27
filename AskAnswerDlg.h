@@ -43,6 +43,7 @@ public:
 	afx_msg void OnBnClickedBtnNew();
 	afx_msg void OnBnClickedBtnDel();
 	afx_msg void OnBnClickedBtnNext();
+	afx_msg void OnDropFiles(HDROP hDropInfo); 
 	CStatic m_lbl_no;
 	CString m_strFileName;
 	void SendMessageStatus(MSG_TYPE type,CString msg=L"");
@@ -50,5 +51,5 @@ public:
 	afx_msg void OnEnChangeEditQuestion();
 	afx_msg void OnEnChangeEditAnswer();
 	void OnOK();
-
+	void OpenFile();
 };

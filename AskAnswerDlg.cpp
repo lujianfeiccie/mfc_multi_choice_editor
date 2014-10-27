@@ -50,6 +50,7 @@ BEGIN_MESSAGE_MAP(CAskAnswerDlg, CDialogEx)
 	ON_MESSAGE(WM_MSG_STATUS,&CAskAnswerDlg::OnMessageReceive)
 	ON_EN_CHANGE(IDC_EDIT_QUESTION, &CAskAnswerDlg::OnEnChangeEditQuestion)
 	ON_EN_CHANGE(IDC_EDIT_ANSWER, &CAskAnswerDlg::OnEnChangeEditAnswer)
+	ON_WM_DROPFILES()
 END_MESSAGE_MAP()
 
 
@@ -81,8 +82,10 @@ UINT ThreadSaveInAskAnswer(LPVOID lPvoid)
 		
 		xml.AddElem(L"text");
 		xml.AddAttrib(L"tag",L"answer");
-		model->m_answer.Replace(L"\r\n",L"&#x0A;");
-		xml.AddAttrib(L"value",model->m_answer);
+		
+		CString answer = model->m_answer;
+		answer.Replace(L"\r\n",L"&#x0A;");
+		xml.AddAttrib(L"value",model->m_answer.Trim());
 		//Util::LOG(L"answer=%s",model->m_answer);
 		xml.OutOfElem();	
 
@@ -285,57 +288,7 @@ void CAskAnswerDlg::OnMenuOpen()
 	if(FileDlg.DoModal()!=IDOK) return;
 		m_strFileName = FileDlg.GetPathName();
 
-		//Util::LOG(L"right=%s",m_strFileName.Right(3));
-	if(m_strFileName.Right(4)!=L".xml")
-	{
-		MessageBox(L"格式有误");
-		return;
-	}
-		SetWindowTextW(FileDlg.GetFileName());
-
-	SendMessageStatus(MSG_TYPE::MSG_Loading);
-	m_oper_type = OperationType::Load;
-	setEnable(TRUE);
-	
-	CMarkup xml;
-	BOOL flag = xml.Load(m_strFileName);
-	Util::LOG(L"flag=%d",flag);
-	 
-	xml.FindElem(L"root");
-	xml.IntoElem();
-	m_list.clear();
-	while(xml.FindElem(L"question"))
-	{
-	  
-		xml.IntoElem();			
-		xml.ResetMainPos();
-		
-		CModelAskAnswer *model = new CModelAskAnswer;
-		while(xml.FindElem(L"text"))
-		{
-			CString tag = xml.GetAttrib(L"tag");
-			if(tag == L"question")
-			{
-				model->m_ask = xml.GetAttrib(L"value");
-			}
-			else
-			{
-				model->m_answer = xml.GetAttrib(L"value");				
-				//Util::LOG(L"length=%d",model->m_answer.GetLength());
-				Util::AddReturnFromXml(model->m_answer);				
-				//Util::LOG(L"answer=%s",model->m_answer);
-			}
-			//Util::LOG(L"tag=%s",tag);
-		}
-		m_list.push_back(model);
-
-		xml.OutOfElem();
-
-	}
-	xml.OutOfElem();
-	m_current_index = 0;
-	updateQuestionUI();
-	SendMessageStatus(MSG_TYPE::MSG_Finish);
+	OpenFile();
 }
 
 
@@ -362,7 +315,17 @@ void CAskAnswerDlg::OnMenuSave()
 	AfxBeginThread(ThreadSaveInAskAnswer,this);
 }
 
+void CAskAnswerDlg::OnDropFiles(HDROP hDropInfo)
+{
+	//Util::LOG(L"OnDropFiles");
+	TCHAR FileName[512];
+	memset(FileName,0,512 * sizeof(TCHAR));
+    UINT nChars= ::DragQueryFile( hDropInfo, 0 ,FileName , 512 * sizeof( TCHAR ) );
 
+	m_strFileName = FileName;
+	OpenFile();
+    ::DragFinish( hDropInfo ); 
+}
 void CAskAnswerDlg::OnMenuExit()
 {
 	// TODO: 在此添加命令处理程序代码
@@ -476,6 +439,61 @@ void CAskAnswerDlg::OnEnChangeEditAnswer()
 	m_edit_answer.GetWindowTextW(answer);
 	//Util::LOG(L"answer=%s",answer);
 	model->m_answer = answer;
+}
+void CAskAnswerDlg::OpenFile()
+{
+	if(m_strFileName.Right(4)!=L".xml")
+	{
+		MessageBox(L"格式有误");
+		return;
+	}	
+
+	
+	SetWindowTextW(Util::GetFileNameByPath(m_strFileName));
+
+	SendMessageStatus(MSG_TYPE::MSG_Loading);
+	m_oper_type = OperationType::Load;
+	setEnable(TRUE);
+	
+	CMarkup xml;
+	BOOL flag = xml.Load(m_strFileName);
+	Util::LOG(L"flag=%d",flag);
+	 
+	xml.FindElem(L"root");
+	xml.IntoElem();
+	m_list.clear();
+	while(xml.FindElem(L"question"))
+	{
+	  
+		xml.IntoElem();			
+		xml.ResetMainPos();
+		
+		CModelAskAnswer *model = new CModelAskAnswer;
+		while(xml.FindElem(L"text"))
+		{
+			CString tag = xml.GetAttrib(L"tag");
+			if(tag == L"question")
+			{
+				model->m_ask = xml.GetAttrib(L"value");
+			}
+			else
+			{
+				model->m_answer = xml.GetAttrib(L"value");				
+				//Util::LOG(L"length=%d",model->m_answer.GetLength());
+				Util::AddReturnFromXml(model->m_answer);				
+				//Util::LOG(L"answer=%s",model->m_answer);
+			}
+			//Util::LOG(L"tag=%s",tag);
+		}
+		m_list.push_back(model);
+
+		xml.OutOfElem();
+
+	}
+	xml.OutOfElem();
+	m_current_index = 0;
+	updateQuestionUI();
+	SendMessageStatus(MSG_TYPE::MSG_Finish);
 }
 void CAskAnswerDlg::OnOK()
 {

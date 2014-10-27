@@ -323,3 +323,7 @@ void Util::AddReturnFromXml(CString &str)
 		//Util::LOG(L"%x",model->m_answer[i]);
 	}	
 }
+CString Util::GetFileNameByPath(CString path)
+{  
+  return path.Mid(path.ReverseFind( '\\')+1);
+}

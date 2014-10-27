@@ -118,7 +118,7 @@ BEGIN_MESSAGE_MAP(CMulti_ChoiceDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_CHOICE4, &CMulti_ChoiceDlg::OnEnChangeEditChoice4)
 	ON_MESSAGE(WM_MSG_STATUS,&CMulti_ChoiceDlg::OnMessageReceive)
 	ON_WM_CLOSE()	
-	
+	ON_WM_DROPFILES()
 END_MESSAGE_MAP()
 
 
@@ -385,9 +385,9 @@ UINT ThreadSave(LPVOID lPvoid)
 	}*/
 
 	
-	
-	model->m_note.Replace(L"\r\n",L"&#x0A;");
-	xml.AddAttrib(L"note",model->m_note.Trim());
+	CString note = model->m_note;
+	note.Replace(L"\r\n",L"&#x0A;");
+	xml.AddAttrib(L"note",note.Trim());
 		xml.IntoElem();;
 		xml.AddElem(L"choice",model->m_choices[0].Trim());
 		xml.AddElem(L"choice",model->m_choices[1].Trim());
@@ -442,64 +442,7 @@ void CMulti_ChoiceDlg::OnMenuLoad()
 	if(FileDlg.DoModal()!=IDOK) return;
 		m_strFileName = FileDlg.GetPathName();
 
-	if(m_strFileName.Right(4)!=L".xml")
-	{
-		MessageBox(L"格式有误");
-		return;
-	}
-		SetWindowTextW(FileDlg.GetFileName());
-
-	
-	SendMessageStatus(MSG_TYPE::MSG_Loading);
-	m_oper_type = OperationType::Load;
-	setEnable(TRUE);
-	
-	CMarkup xml;
-	BOOL flag = xml.Load(m_strFileName);
-	Util::LOG(L"flag=%d",flag);
-	 
-	xml.FindElem(L"root");
-	xml.IntoElem();
-	m_list.clear();
-	while(xml.FindElem(L"question"))
-	{
-	    CString title = xml.GetAttrib(L"title");
-		CString answer = xml.GetAttrib(L"answer");
-		CString note = xml.GetAttrib(L"note");
-		
-		CModelChoice *model = new CModelChoice;
-
-		model->m_title = title;
-		model->m_answer = answer;
-		model->m_note = note;
-	
-		
-		Util::AddReturnFromXml(model->m_note);
-	
-		
-		Util::LOG(L"\ntitle=%s answer=%s note=%s\n",title,answer,note);
-
-		
-
-		xml.IntoElem();
-			
-		xml.ResetMainPos();
-		int i=0;
-		while(xml.FindElem(L"choice")){
-			CString choice=xml.GetData();
-			model->m_choices[i] = choice;
-			Util::LOG(L"\nchoice%d=%s\n",i,choice);
-			++i;
-		}		
-		m_list.push_back(model);
-
-		xml.OutOfElem();
-
-	}
-	xml.OutOfElem();
-	m_current_index = 0;
-	updateQuestionUI();
-	SendMessageStatus(MSG_TYPE::MSG_Finish);
+	OpenFile();
 }
 void CMulti_ChoiceDlg::updateQuestionUI()
 {
@@ -857,3 +800,76 @@ void CMulti_ChoiceDlg::OnClose()
 	m_list.clear();	
 }
 
+void CMulti_ChoiceDlg::OnDropFiles(HDROP hDropInfo)
+{
+	//Util::LOG(L"OnDropFiles");
+	TCHAR FileName[512];
+	memset(FileName,0,512 * sizeof(TCHAR));
+    UINT nChars= ::DragQueryFile( hDropInfo, 0 ,FileName , 512 * sizeof( TCHAR ) );
+
+	m_strFileName = FileName;
+	OpenFile();
+    ::DragFinish( hDropInfo ); 
+}
+
+void CMulti_ChoiceDlg::OpenFile()
+{
+	if(m_strFileName.Right(4)!=L".xml")
+	{
+		MessageBox(L"格式有误");
+		return;
+	}
+	SetWindowTextW(Util::GetFileNameByPath(m_strFileName));
+
+	
+	SendMessageStatus(MSG_TYPE::MSG_Loading);
+	m_oper_type = OperationType::Load;
+	setEnable(TRUE);
+	
+	CMarkup xml;
+	BOOL flag = xml.Load(m_strFileName);
+	Util::LOG(L"flag=%d",flag);
+	 
+	xml.FindElem(L"root");
+	xml.IntoElem();
+	m_list.clear();
+	while(xml.FindElem(L"question"))
+	{
+	    CString title = xml.GetAttrib(L"title");
+		CString answer = xml.GetAttrib(L"answer");
+		CString note = xml.GetAttrib(L"note");
+		
+		CModelChoice *model = new CModelChoice;
+
+		model->m_title = title;
+		model->m_answer = answer;
+		model->m_note = note;
+	
+		
+		Util::AddReturnFromXml(model->m_note);
+	
+		
+		Util::LOG(L"\ntitle=%s answer=%s note=%s\n",title,answer,note);
+
+		
+
+		xml.IntoElem();
+			
+		xml.ResetMainPos();
+		int i=0;
+		while(xml.FindElem(L"choice")){
+			CString choice=xml.GetData();
+			model->m_choices[i] = choice;
+			Util::LOG(L"\nchoice%d=%s\n",i,choice);
+			++i;
+		}		
+		m_list.push_back(model);
+
+		xml.OutOfElem();
+
+	}
+	xml.OutOfElem();
+	m_current_index = 0;
+	updateQuestionUI();
+	SendMessageStatus(MSG_TYPE::MSG_Finish);
+}

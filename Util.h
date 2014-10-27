@@ -16,6 +16,7 @@ public:
 	static CRect getControlPosition(const CWnd& cwnd,LPVOID lpvoid);
 	static void setControlPosition(CWnd& cwnd,LPVOID lpvoid,int x,int y);
 	static void AddReturnFromXml(CString &str);
+	static CString GetFileNameByPath(CString path);
 public:
  ~Util(void);
 };
