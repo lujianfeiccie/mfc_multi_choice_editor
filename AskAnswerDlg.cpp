@@ -85,7 +85,7 @@ UINT ThreadSaveInAskAnswer(LPVOID lPvoid)
 		
 		CString answer = model->m_answer;
 		answer.Replace(L"\r\n",L"&#x0A;");
-		xml.AddAttrib(L"value",model->m_answer.Trim());
+		xml.AddAttrib(L"value",answer);
 		//Util::LOG(L"answer=%s",model->m_answer);
 		xml.OutOfElem();	
 
@@ -98,7 +98,7 @@ UINT ThreadSaveInAskAnswer(LPVOID lPvoid)
 	xml.SetDoc(result);
 	xml.Save(dlg->m_strFileName);
 	dlg->SendMessageStatus(MSG_TYPE::MSG_Finish);
-	Util::LOG(L"%s",xml.GetDoc());	
+	//Util::LOG(L"%s",xml.GetDoc());	
 return 0;
 }
 LONG CAskAnswerDlg::OnMessageReceive(WPARAM wParam,LPARAM lParam)
@@ -495,6 +495,7 @@ void CAskAnswerDlg::OpenFile()
 	updateQuestionUI();
 	SendMessageStatus(MSG_TYPE::MSG_Finish);
 }
+
 void CAskAnswerDlg::OnOK()
 {
  return;

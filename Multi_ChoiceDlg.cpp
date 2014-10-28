@@ -388,7 +388,7 @@ UINT ThreadSave(LPVOID lPvoid)
 	CString note = model->m_note;
 	note.Replace(L"\r\n",L"&#x0A;");
 	xml.AddAttrib(L"note",note.Trim());
-		xml.IntoElem();;
+		xml.IntoElem();
 		xml.AddElem(L"choice",model->m_choices[0].Trim());
 		xml.AddElem(L"choice",model->m_choices[1].Trim());
 		xml.AddElem(L"choice",model->m_choices[2].Trim());
