@@ -100,6 +100,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AskAnswerDlg.h" />
+    <ClInclude Include="CalcDlg.h" />
+    <ClInclude Include="ControlTool.h" />
     <ClInclude Include="MainDlg.h" />
     <ClInclude Include="Markup.h" />
     <ClInclude Include="ModelAskAnswer.h" />
@@ -114,6 +116,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AskAnswerDlg.cpp" />
+    <ClCompile Include="CalcDlg.cpp" />
+    <ClCompile Include="ControlTool.cpp" />
     <ClCompile Include="MainDlg.cpp" />
     <ClCompile Include="Markup.cpp" />
     <ClCompile Include="ModelAskAnswer.cpp" />

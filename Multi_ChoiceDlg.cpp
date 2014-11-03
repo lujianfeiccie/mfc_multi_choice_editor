@@ -426,6 +426,7 @@ void CMulti_ChoiceDlg::OnMenuSave()
 				{
 					m_strFileName.Append(L".xml");
 				}
+				SetWindowTextW(Util::GetFileNameByPath(m_strFileName));
 		}
 		SendMessageStatus(MSG_TYPE::MSG_Processing);
 		AfxBeginThread(ThreadSave,this);
@@ -563,7 +564,7 @@ void CMulti_ChoiceDlg::OnMenuNew()
 	{
 		switch(MessageBox(L"需要保存之前的更改?",L"提示",MB_YESNOCANCEL))
 		{
-		case IDOK:
+		case IDYES:
 			{
 				OnMenuSave();
 			}
@@ -574,12 +575,14 @@ void CMulti_ChoiceDlg::OnMenuNew()
 			break;
 		case IDCANCEL:
 			{
-				return;
+				
 			}
-			break;
+			return;
 		}
 	   
 	}	
+	m_current_index = 0;
+	m_list.clear();
 	OnBnClickedBtnNew();	   
 	m_oper_type = OperationType::New;
 	setEnable(TRUE); 

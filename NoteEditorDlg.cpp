@@ -31,7 +31,6 @@ void CNoteEditorDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CNoteEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_OK, &CNoteEditorDlg::OnBnClickedBtnOk)
 	ON_BN_CLICKED(IDC_BTN_CANCEL, &CNoteEditorDlg::OnBnClickedBtnCancel)
-	ON_BN_CLICKED(IDC_BTN_INSERT_RETURN, &CNoteEditorDlg::OnBnClickedBtnInsertReturn)
 END_MESSAGE_MAP()
 
 

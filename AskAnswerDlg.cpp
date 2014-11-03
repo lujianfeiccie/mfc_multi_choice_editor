@@ -182,6 +182,7 @@ BOOL CAskAnswerDlg::PreTranslateMessage(MSG* pMsg)
 			case 'N':
 			if (bCtrl)
 			{
+				Util::LOG(L"Ctrl+N");
 				OnMenuNew();
 			}
 			break;
@@ -254,23 +255,29 @@ void CAskAnswerDlg::OnMenuNew()
 	{
 		switch(MessageBox(L"需要保存之前的更改?",L"提示",MB_YESNOCANCEL))
 		{
-		case IDOK:
+		case IDYES:
 			{
+				Util::LOG(L"Yes");
 				OnMenuSave();
 			}
 			break;
 		case IDNO:
-			{
+			{	
+				Util::LOG(L"No");
 			}
 			break;
 		case IDCANCEL:
 			{
-				return;
+				Util::LOG(L"Cancel");
 			}
-			break;
+			return;
 		}
 	   
 	}	
+	Util::LOG(L"OnMenuNew");
+	SetWindowTextW(L"新建简答题");
+	m_current_index = 0;
+	m_list.clear();
 	OnBnClickedBtnNew();	   
 	m_oper_type = OperationType::New;
 	setEnable(TRUE); 
@@ -310,6 +317,7 @@ void CAskAnswerDlg::OnMenuSave()
 			{
 				m_strFileName.Append(L".xml");
 			}
+			SetWindowTextW(Util::GetFileNameByPath(m_strFileName));
 	}
 	SendMessageStatus(MSG_TYPE::MSG_Processing);
 	AfxBeginThread(ThreadSaveInAskAnswer,this);
@@ -328,7 +336,7 @@ void CAskAnswerDlg::OnDropFiles(HDROP hDropInfo)
 }
 void CAskAnswerDlg::OnMenuExit()
 {
-	// TODO: 在此添加命令处理程序代码
+	
 	// TODO: 在此添加命令处理程序代码
 	if(m_oper_type == OperationType::New)
 	{
@@ -359,7 +367,7 @@ void CAskAnswerDlg::OnBnClickedBtnPrev()
 
 void CAskAnswerDlg::updateQuestionUI()
 {
-	int maxsize = m_list.size();
+	int maxsize = m_list.size();	
 	if(m_current_index>= maxsize){
 		--m_current_index;
 	}
@@ -367,12 +375,14 @@ void CAskAnswerDlg::updateQuestionUI()
 	m_edit_question.SetWindowTextW(model->m_ask);
 	m_edit_answer.SetWindowTextW(model->m_answer);
 	CString tmp;
+	Util::LOG(L"%d/%d",m_current_index+1,m_list.size());
 	tmp.Format(L"%d/%d",m_current_index+1,m_list.size());
 	m_lbl_no.SetWindowTextW(tmp);
 }
 void CAskAnswerDlg::OnBnClickedBtnNew()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	Util::LOG(L"OnBnClickedBtnNew");
 	CModelAskAnswer* model = new CModelAskAnswer;
 	m_list.push_back(model);
 	m_current_index = m_list.size()-1;
@@ -384,6 +394,11 @@ void CAskAnswerDlg::OnBnClickedBtnNew()
 void CAskAnswerDlg::OnBnClickedBtnDel()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	if(m_list.size()==1)
+	{
+       MessageBox(L"大小为1,不能删除!");
+	   return;
+	}
 	if(IDOK == MessageBox(L"确定删除?",L"提示",MB_OKCANCEL))
 	{
 	vector<CModelAskAnswer*>::iterator it = m_list.begin()+m_current_index;
@@ -404,6 +419,7 @@ void CAskAnswerDlg::OnBnClickedBtnNext()
 		++m_current_index;
 		updateQuestionUI();
 	}
+	Util::LOG(L"OnBnClickedBtnNext");
 }
 void CAskAnswerDlg::SendMessageStatus(MSG_TYPE type,CString msg)
 {

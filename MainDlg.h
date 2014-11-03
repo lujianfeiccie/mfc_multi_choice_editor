@@ -21,4 +21,5 @@ protected:
 public:
 	afx_msg void OnBnClickedBtnMultiChoice();
 	afx_msg void OnBnClickedBtnShortAnswer();
+	afx_msg void OnBnClickedBtnCalc();
 };

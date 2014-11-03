@@ -60,6 +60,12 @@
     <ClInclude Include="ModelAskAnswer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CalcDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlTool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Multi_Choice.cpp">
@@ -90,6 +96,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ModelAskAnswer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CalcDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlTool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
