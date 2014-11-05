@@ -18,11 +18,12 @@ IMPLEMENT_DYNAMIC(CCalcDlg, CDialogEx)
 CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CCalcDlg::IDD, pParent)
 {
-
+	m_static_edit_manager = new CStaticEditManager(this);
 }
 
 CCalcDlg::~CCalcDlg()
 {
+	delete m_static_edit_manager;
 }
 
 void CCalcDlg::DoDataExchange(CDataExchange* pDX)
@@ -34,6 +35,8 @@ void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CCalcDlg, CDialogEx)
 	ON_COMMAND_RANGE(2200,2210,OnBtnClick)
 	ON_CONTROL_RANGE(EN_CHANGE,2211,2222,OnEditChange)
+	ON_BN_CLICKED(IDC_BTN_ADD, &CCalcDlg::OnBnClickedBtnAdd)
+	ON_BN_CLICKED(IDC_BTN_DEL, &CCalcDlg::OnBnClickedBtnDel)
 END_MESSAGE_MAP()
 
 
@@ -60,9 +63,11 @@ BOOL CCalcDlg::OnInitDialog()
 	SetWindowTextW(L"计算题编辑器");
 	ModifyStyleEx(0,WS_EX_APPWINDOW);
 
-	CControlTool::CreateButton(2200,L"你牛逼",CRect(100,100,100+100,100+50),this);
-	CControlTool::CreateButton(2201,L"你厉害",CRect(100,200,100+100,200+50),this);
-	CEdit *edit = CControlTool::CreateEdit(2211,CRect(100,300,100+100,300+50),this);	
+	////CControlTool::CreateButton(2200,L"你牛逼",CRect(100,100,100+100,100+50),this);
+	//CControlTool::CreateButton(2201,L"你厉害",CRect(100,200,100+100,200+50),this);
+	//CEdit *edit = CControlTool::CreateEdit(2211,CRect(100,300,100+100,300+50),this);	
+	
+
 	return TRUE;
 }
 void CCalcDlg::setEnable(BOOL enable)
@@ -82,4 +87,18 @@ BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
 {
 	if(pMsg->message==WM_KEYDOWN && pMsg->wParam==VK_ESCAPE) return TRUE; 
 	return CDialog::PreTranslateMessage(pMsg);
+}
+
+
+void CCalcDlg::OnBnClickedBtnAdd()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_static_edit_manager->add(TYPE::TYPE_TEXT,TAG::TAG_QUESTION);
+}
+
+
+void CCalcDlg::OnBnClickedBtnDel()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	m_static_edit_manager->remove();
 }

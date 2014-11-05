@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include "StaticEditManager.h"
 // CCalcDlg ¶Ô»°¿ò
 
 class CCalcDlg : public CDialogEx
@@ -25,4 +25,8 @@ protected:
 	void setEnable(BOOL enable);
 	void OnBtnClick(UINT nCmdID);
 	void OnEditChange(UINT ID);
+	CStaticEditManager* m_static_edit_manager;
+public:
+	afx_msg void OnBnClickedBtnAdd();
+	afx_msg void OnBnClickedBtnDel();
 };

@@ -66,6 +66,15 @@
     <ClInclude Include="ControlTool.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ModelCalc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelStaticEdit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticEditManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Multi_Choice.cpp">
@@ -102,6 +111,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ControlTool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelCalc.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelStaticEdit.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticEditManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
