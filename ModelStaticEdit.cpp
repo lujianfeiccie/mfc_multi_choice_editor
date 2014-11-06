@@ -14,4 +14,8 @@ CModelStaticEdit::~CModelStaticEdit(void)
 	{
 	  delete m_edit;
 	}
+	if(m_static != NULL)
+	{
+		delete m_static;
+	}
 }

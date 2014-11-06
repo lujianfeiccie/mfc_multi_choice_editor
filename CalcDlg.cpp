@@ -19,6 +19,8 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CCalcDlg::IDD, pParent)
 {
 	m_static_edit_manager = new CStaticEditManager(this);
+	m_static_edit_manager->m_left = 10;
+	m_static_edit_manager->m_top  = 10;
 }
 
 CCalcDlg::~CCalcDlg()
@@ -29,6 +31,10 @@ CCalcDlg::~CCalcDlg()
 void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_RADIO_QUESTION, m_radio_question);
+	DDX_Control(pDX, IDC_RADIO_ANSWER, m_radio_answer);
+	DDX_Control(pDX, IDC_RADIO_TEXT, m_radio_text);
+	DDX_Control(pDX, IDC_RADIO_IMAGE, m_radio_image);
 }
 
 
@@ -93,7 +99,25 @@ BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
 void CCalcDlg::OnBnClickedBtnAdd()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_static_edit_manager->add(TYPE::TYPE_TEXT,TAG::TAG_QUESTION);
+	TYPE type;
+	if(m_radio_text.GetCheck())
+	{
+		type = TYPE::TYPE_TEXT;
+	}
+	else
+	{
+		type = TYPE::TYPE_IMAGE;
+	}
+	TAG tag;
+	if(m_radio_question.GetCheck())
+	{
+		tag = TAG::TAG_QUESTION;
+	}
+	else
+	{
+		tag = TAG::TAG_ANSWER;
+	}
+	m_static_edit_manager->add(type,tag);
 }
 
 

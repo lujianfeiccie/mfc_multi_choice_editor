@@ -1,6 +1,7 @@
 #pragma once
 
 #include "StaticEditManager.h"
+#include "afxwin.h"
 // CCalcDlg ¶Ô»°¿ò
 
 class CCalcDlg : public CDialogEx
@@ -29,4 +30,8 @@ protected:
 public:
 	afx_msg void OnBnClickedBtnAdd();
 	afx_msg void OnBnClickedBtnDel();
+	CButton m_radio_question;
+	CButton m_radio_answer;
+	CButton m_radio_text;
+	CButton m_radio_image;
 };

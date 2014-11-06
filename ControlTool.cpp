@@ -25,3 +25,10 @@ CEdit* CControlTool::CreateEdit(int nID,CRect rect,CWnd* context)
 	p_Edit->Create( WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, rect, context, nID ); //´´½¨°´Å¥
 	return p_Edit;
 }
+CStatic* CControlTool::CreateStatic(int nID,CRect rect,CWnd* context)
+{
+	CStatic *p_Static = new CStatic();
+	ASSERT_VALID(p_Static);
+	p_Static->Create(L"",WS_CHILD | WS_VISIBLE,rect,context,nID);
+	return p_Static;
+}
