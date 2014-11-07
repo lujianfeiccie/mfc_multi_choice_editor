@@ -22,7 +22,7 @@ CEdit* CControlTool::CreateEdit(int nID,CRect rect,CWnd* context)
 {
 	CEdit *p_Edit = new CEdit();
 	ASSERT_VALID(p_Edit);
-	p_Edit->Create( WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, rect, context, nID ); //创建按钮
+	p_Edit->Create( WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | WS_VSCROLL | WS_HSCROLL | ES_WANTRETURN | ES_MULTILINE, rect, context, nID ); //创建按钮
 	return p_Edit;
 }
 CStatic* CControlTool::CreateStatic(int nID,CRect rect,CWnd* context)

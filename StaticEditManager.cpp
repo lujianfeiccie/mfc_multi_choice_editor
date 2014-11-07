@@ -7,6 +7,7 @@ CStaticEditManager::CStaticEditManager(CWnd* context)
 	this->context = context;
 	m_left = 0;
 	m_top = 0;
+	this->m_max_height =0;
 }
 
 
@@ -23,33 +24,66 @@ CStaticEditManager::~CStaticEditManager(void)
 
 void CStaticEditManager::add(TYPE type,TAG tag)
 {
-	int height_interval = 80;
+	int height_interval = 10;
 
 	int width_for_static = 70;
 	int height_for_static = 70;
 
 	int width_for_edit = 500;
 	int height_for_edit = 70;
-	CStatic* cstatic = CControlTool::CreateStatic(0,CRect(m_left,m_top+m_list.size() * height_interval,
-		                         m_left+width_for_static,m_top+m_list.size() * height_interval+height_for_edit),context);
+	int height_for_edit_image = 50;
+	
+		
+
+	CStatic* cstatic = NULL;
+
+	CEdit* edit = NULL;
+	
 	switch(type)
 	{
 	case TYPE::TYPE_IMAGE:
-		cstatic->SetWindowTextW(L"Í¼Æ¬");
+		{
+		 cstatic = CControlTool::CreateStatic(0,
+			 CRect(m_left,m_max_height+height_interval,
+		m_left+width_for_static, m_max_height+height_interval+height_for_edit_image),
+		context);
+
+		 CRect rect;
+		cstatic->GetWindowRect(rect);
+		context->ScreenToClient(rect);
+		 cstatic->SetWindowTextW(L"Í¼Æ¬");
+
+		 edit = CControlTool::CreateEdit(m_list.size(),
+		CRect(rect.right,rect.top,rect.right+width_for_edit, rect.bottom),
+		context);
+
+		 m_max_height =rect.bottom;
+		}
 		break;
 	case TYPE::TYPE_TEXT:
+		{
+		cstatic = CControlTool::CreateStatic(0,
+			 CRect(m_left,m_max_height+height_interval,
+		m_left+width_for_static, m_max_height+height_interval+height_for_edit),
+		context);
+
+		CRect rect;
+		cstatic->GetWindowRect(rect);
+		context->ScreenToClient(rect);
+
 		cstatic->SetWindowTextW(L"ÎÄ×Ö");
+
+		edit = CControlTool::CreateEdit(m_list.size(),
+			CRect(rect.right,rect.top,
+			rect.right+width_for_edit, rect.bottom),
+		context);
+		
+		m_max_height = rect.bottom;
+		}
 		break;
 	}
 	
 
-	CRect rect;
-	cstatic->GetClientRect(rect);
-	Util::LOG(L"left=%ld,top=%ld,right=%ld",rect.left,rect.top,rect.right);
-	CEdit* edit = CControlTool::CreateEdit(m_list.size(),
-		CRect(rect.right,m_top+m_list.size() * height_interval,
-		rect.right+width_for_edit, m_top+m_list.size() * height_interval+height_for_edit),context);
-	
 	
 	CModelStaticEdit* model = new CModelStaticEdit;
 	model->m_type = type;
@@ -60,11 +94,30 @@ void CStaticEditManager::add(TYPE type,TAG tag)
 }
 void CStaticEditManager::remove()
 {
-	if(m_list.size()>0){
-		CModelStaticEdit* model = m_list[m_list.size()-1];
+	if(m_list.size()>1){
+		CModelStaticEdit* model = m_list[m_list.size()-1];		
+		CRect rect;
+		model->m_edit->GetWindowRect(rect);
+		context->ScreenToClient(rect);
+		//Util::LOG(L"max_height=%d",rect.bottom);
 		model->m_edit->DestroyWindow();
 		model->m_static->DestroyWindow();
 		delete model;
-		m_list.pop_back();
+
+		CModelStaticEdit* model_pre = m_list[m_list.size()-2];
+		
+		model_pre->m_edit->GetWindowRect(rect);
+		context->ScreenToClient(rect);
+		m_max_height = rect.bottom;
+		//Util::LOG(L"pre max_height=%d",rect.bottom);
+		m_list.pop_back();		
 	}
+}
+CModelStaticEdit* CStaticEditManager::at(int index)
+{
+	return m_list.at(index);
+}
+int CStaticEditManager::size()
+{
+	return m_list.size();
 }

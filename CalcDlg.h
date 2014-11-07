@@ -34,4 +34,5 @@ public:
 	CButton m_radio_answer;
 	CButton m_radio_text;
 	CButton m_radio_image;
+	void OnOK();
 };

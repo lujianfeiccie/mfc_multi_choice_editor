@@ -91,10 +91,35 @@ void CCalcDlg::OnEditChange(UINT ID)
 }
 BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
 {
+	if (pMsg->message==WM_KEYDOWN)
+	{
+	BOOL bCtrl=::GetKeyState(VK_CONTROL)&0x8000;
+	BOOL bShift=::GetKeyState(VK_SHIFT)&0x8000;
+
+	// only gets here if CTRL key is pressed
+	BOOL bAlt=::GetKeyState(VK_MENU)&0x8000;
+
+		switch( pMsg->wParam )
+		{
+
+			case 'A':
+			if (bCtrl)
+			{
+				for(int i=0;i<m_static_edit_manager->size();i++)
+				{
+					m_static_edit_manager->at(i)->m_edit->SetSel(0,-1);
+				}
+			}			
+			break;
+		}
+	}
 	if(pMsg->message==WM_KEYDOWN && pMsg->wParam==VK_ESCAPE) return TRUE; 
 	return CDialog::PreTranslateMessage(pMsg);
 }
-
+void CCalcDlg::OnOK()
+{
+ return;
+}
 
 void CCalcDlg::OnBnClickedBtnAdd()
 {
