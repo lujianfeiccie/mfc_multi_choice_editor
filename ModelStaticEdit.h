@@ -18,6 +18,7 @@ public:
 	~CModelStaticEdit(void);
 	CStatic* m_static;
 	CEdit*   m_edit;
+	CString m_value;
 	TAG m_tag;
 	TYPE m_type;	
 };

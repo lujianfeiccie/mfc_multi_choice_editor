@@ -250,7 +250,6 @@ void CAskAnswerDlg::setEnable(BOOL enable)
 void CAskAnswerDlg::OnMenuNew()
 {
 	// TODO: 在此添加命令处理程序代码
-	// TODO: 在此添加命令处理程序代码
 	if(m_oper_type == OperationType::New || m_oper_type == OperationType::Load)
 	{
 		switch(MessageBox(L"需要保存之前的更改?",L"提示",MB_YESNOCANCEL))

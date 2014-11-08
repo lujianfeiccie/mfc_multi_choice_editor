@@ -1,11 +1,12 @@
 #pragma once
-class ModelCalc
+#include "ModelStaticEdit.h"
+class CModelCalc
 {
 public:
-	ModelCalc(void);
-	~ModelCalc(void);
-	CString m_type;
-	CString m_tag;
+	CModelCalc(void);
+	~CModelCalc(void);
+	TYPE m_type;
+	TAG m_tag;
 	CString m_value;
 };
 

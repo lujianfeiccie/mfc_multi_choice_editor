@@ -8,6 +8,7 @@ CStaticEditManager::CStaticEditManager(CWnd* context)
 	m_left = 0;
 	m_top = 0;
 	this->m_max_height =0;
+	this->m_id_start = 0;
 }
 
 
@@ -30,8 +31,8 @@ void CStaticEditManager::add(TYPE type,TAG tag)
 	int height_for_static = 70;
 
 	int width_for_edit = 500;
-	int height_for_edit = 70;
-	int height_for_edit_image = 50;
+	int height_for_edit = 80;
+	int height_for_edit_image = 25;
 	
 		
 
@@ -51,11 +52,17 @@ void CStaticEditManager::add(TYPE type,TAG tag)
 		 CRect rect;
 		cstatic->GetWindowRect(rect);
 		context->ScreenToClient(rect);
-		 cstatic->SetWindowTextW(L"Í¼Æ¬");
-
-		 edit = CControlTool::CreateEdit(m_list.size(),
+		if(tag == TAG::TAG_QUESTION)
+		{
+		 cstatic->SetWindowTextW(L"Í¼Æ¬(ÎÊ)");
+		}
+		else
+		{
+		 cstatic->SetWindowTextW(L"Í¼Æ¬(´ð)");
+		}
+		 edit = CControlTool::CreateEdit(m_id_start+m_list.size(),
 		CRect(rect.right,rect.top,rect.right+width_for_edit, rect.bottom),
-		context);
+		context,TRUE);
 
 		 m_max_height =rect.bottom;
 		}
@@ -71,9 +78,16 @@ void CStaticEditManager::add(TYPE type,TAG tag)
 		cstatic->GetWindowRect(rect);
 		context->ScreenToClient(rect);
 
-		cstatic->SetWindowTextW(L"ÎÄ×Ö");
+		if(tag == TAG::TAG_QUESTION)
+		{
+		 cstatic->SetWindowTextW(L"ÎÄ×Ö(ÎÊ)");
+		}
+		else
+		{
+		 cstatic->SetWindowTextW(L"ÎÄ×Ö(´ð)");
+		}
 
-		edit = CControlTool::CreateEdit(m_list.size(),
+		edit = CControlTool::CreateEdit(m_id_start+m_list.size(),
 			CRect(rect.right,rect.top,
 			rect.right+width_for_edit, rect.bottom),
 		context);
@@ -120,4 +134,25 @@ CModelStaticEdit* CStaticEditManager::at(int index)
 int CStaticEditManager::size()
 {
 	return m_list.size();
+}
+vector<CModelStaticEdit*> CStaticEditManager::getList()
+{
+	return m_list;
+}
+void CStaticEditManager::clear()
+{
+	for(int i=0;i<m_list.size();i++)
+	{
+		CModelStaticEdit* model = m_list[i];		
+		CRect rect;
+		model->m_edit->GetWindowRect(rect);
+		context->ScreenToClient(rect);
+		//Util::LOG(L"max_height=%d",rect.bottom);
+		model->m_edit->DestroyWindow();
+		model->m_static->DestroyWindow();
+		delete model;	
+			
+	}
+	m_max_height = 0;
+	m_list.clear();
 }

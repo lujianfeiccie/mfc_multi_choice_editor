@@ -2,11 +2,11 @@
 #include "ModelCalc.h"
 
 
-ModelCalc::ModelCalc(void)
+CModelCalc::CModelCalc(void)
 {
 }
 
 
-ModelCalc::~ModelCalc(void)
+CModelCalc::~CModelCalc(void)
 {
 }

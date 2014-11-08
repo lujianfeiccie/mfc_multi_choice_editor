@@ -2,6 +2,9 @@
 
 #include "StaticEditManager.h"
 #include "afxwin.h"
+#include "ModelCalc.h"
+#include <vector>
+using namespace std;
 // CCalcDlg ¶Ô»°¿ò
 
 class CCalcDlg : public CDialogEx
@@ -35,4 +38,26 @@ public:
 	CButton m_radio_text;
 	CButton m_radio_image;
 	void OnOK();
+	afx_msg void OnBnClickedBtnPrev();
+	afx_msg void OnBnClickedBtnNext();
+	afx_msg void OnBnClickedBtnNew();
+	afx_msg void OnBnClickedBtnRemove();
+	vector<vector<CModelStaticEdit*>> m_list;
+	afx_msg void OnMenuNew();
+	afx_msg void OnMenuOpen();
+	afx_msg void OnMenuSave();
+	afx_msg void OnMenuExit();	
+	
+	CButton m_btn_prev;
+	CButton m_btn_next;
+	CButton m_btn_new;
+	CButton m_btn_remove;
+	CButton m_btn_add;
+	CButton m_btn_del;
+
+	CString m_strFileName;
+	void SendMessageStatus(MSG_TYPE type,CString msg=L"");
+	LONG OnMessageReceive(WPARAM wParam,LPARAM lParam);
+	void updateQuestionUI();
+	CStatic m_lbl_no;
 };

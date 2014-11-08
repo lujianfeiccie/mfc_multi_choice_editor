@@ -13,9 +13,12 @@ public:
 	int m_top;
 	int size();
 	int m_max_height;
+	int m_id_start;
 	CModelStaticEdit* at(int index);
+	vector<CModelStaticEdit*> getList();
+	void clear();
 private:
 	vector<CModelStaticEdit*> m_list;
-	CWnd* context;
+	CWnd* context;	
 };
 
