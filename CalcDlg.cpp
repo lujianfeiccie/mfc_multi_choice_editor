@@ -301,36 +301,30 @@ void CCalcDlg::OpenFile()
 		xml.ResetMainPos();
 		
 		vector<CModelStaticEdit*> model;
-		BOOL isText,isImage;	
+		BOOL isImage;
 		//while start
-		while( (isText=xml.FindElem(L"text")) || (isImage=xml.FindElem(L"image")) )
+		while(xml.FindElem())
 		{
-			CString tag = xml.GetAttrib(L"tag");			
+			CString elemName = xml.GetTagName();
+			CString tag = xml.GetAttrib(L"tag");				
 			CModelStaticEdit* item = new CModelStaticEdit;
+			//Util::LOG(L"text=%d image=%d",isText,isImage);
 
-			if(tag == L"question")
+			if(elemName == L"text")
 			{
-				if(isText)
-				{
-					item->m_type = TYPE::TYPE_TEXT;					
-				}
-				else
-				{
-					item->m_type = TYPE::TYPE_IMAGE;
-				}
-				item->m_tag = TAG::TAG_QUESTION;
-				
+				item->m_type = TYPE::TYPE_TEXT;					
 			}
 			else
 			{
-				if(isText)
-				{
-					item->m_type = TYPE::TYPE_TEXT;
-				}
-				else
-				{
-					item->m_type = TYPE::TYPE_IMAGE;
-				}
+				item->m_type = TYPE::TYPE_IMAGE;					
+			}
+
+			if(tag == L"question")
+			{
+				item->m_tag = TAG::TAG_QUESTION;
+			}
+			else
+			{
 				item->m_tag = TAG::TAG_ANSWER;
 			}
 			item->m_value = xml.GetAttrib(L"value");
@@ -533,6 +527,9 @@ void CCalcDlg::OnSizingEx(CRect rect)
 	CRect rect_next = Util::getControlPosition(m_btn_next,this);
 
 	CRect rect_new = Util::getControlPosition(m_btn_new,this);
+
+	CRect rect_lbl_no = Util::getControlPosition(m_lbl_no,this);
+
 	CRect rect_remove = Util::getControlPosition(m_btn_remove,this);
 
 
@@ -547,6 +544,9 @@ void CCalcDlg::OnSizingEx(CRect rect)
 
 	Util::setControlPosition(m_btn_new,this,
 		rect_new.left,offset_y);
+
+	Util::setControlPosition(m_lbl_no,this,
+		rect_lbl_no.left,offset_y);
 
 	Util::setControlPosition(m_btn_remove,this,
 		rect_remove.left,offset_y);
