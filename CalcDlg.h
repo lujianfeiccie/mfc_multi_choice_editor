@@ -23,7 +23,6 @@ protected:
 	BOOL OnInitDialog();
 	BOOL PreTranslateMessage(MSG* pMsg);
 	DECLARE_MESSAGE_MAP()
-	OperationType m_oper_type;
 	int m_current_index;
 	CStatusBar m_statusbar_status;
 	void setEnable(BOOL enable);
@@ -60,4 +59,7 @@ public:
 	LONG OnMessageReceive(WPARAM wParam,LPARAM lParam);
 	void updateQuestionUI();
 	CStatic m_lbl_no;
+	OperationType m_oper_type;
+
+	void OpenFile();
 };
