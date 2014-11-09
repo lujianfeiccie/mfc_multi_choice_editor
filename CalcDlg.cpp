@@ -10,17 +10,13 @@
 #define EN_CHANGE_START 2000
 #define EN_CHANGE_END 2020
 
-UINT indicators_calc_dlg[]={
-IDS_STRING_STATUS
-};
-
-
 // CCalcDlg 对话框
 
-IMPLEMENT_DYNAMIC(CCalcDlg, CDialogEx)
+IMPLEMENT_DYNAMIC(CCalcDlg, CBaseDlg)
 
-CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CCalcDlg::IDD, pParent)
+	 
+CCalcDlg::CCalcDlg(CWnd* pParent)
+	: CBaseDlg(CCalcDlg::IDD,pParent)
 {
 	m_static_edit_manager = new CStaticEditManager(this);
 	m_static_edit_manager->m_left = 10;
@@ -30,12 +26,12 @@ CCalcDlg::CCalcDlg(CWnd* pParent /*=NULL*/)
 
 CCalcDlg::~CCalcDlg()
 {
-	delete m_static_edit_manager;
+	delete m_static_edit_manager;	
 }
 
 void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	CBaseDlg::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_RADIO_QUESTION, m_radio_question);
 	DDX_Control(pDX, IDC_RADIO_ANSWER, m_radio_answer);
 	DDX_Control(pDX, IDC_RADIO_TEXT, m_radio_text);
@@ -50,7 +46,7 @@ void CCalcDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CCalcDlg, CDialogEx)	
+BEGIN_MESSAGE_MAP(CCalcDlg, CBaseDlg)	
 	ON_CONTROL_RANGE(EN_CHANGE,EN_CHANGE_START,EN_CHANGE_END,OnEditChange)
 	ON_BN_CLICKED(IDC_BTN_ADD, &CCalcDlg::OnBnClickedBtnAdd)
 	ON_BN_CLICKED(IDC_BTN_DEL, &CCalcDlg::OnBnClickedBtnDel)
@@ -62,7 +58,8 @@ BEGIN_MESSAGE_MAP(CCalcDlg, CDialogEx)
 	ON_COMMAND(ID_32783, &CCalcDlg::OnMenuOpen)
 	ON_COMMAND(ID_32784, &CCalcDlg::OnMenuSave)
 	ON_COMMAND(ID_32785, &CCalcDlg::OnMenuExit)
-	ON_MESSAGE(WM_MSG_STATUS,&CCalcDlg::OnMessageReceive)
+	/*ON_MESSAGE(WM_MSG_STATUS,&CCalcDlg::OnMessageReceive)
+	ON_WM_DROPFILES()*/
 END_MESSAGE_MAP()
 
 
@@ -70,69 +67,29 @@ END_MESSAGE_MAP()
 
 BOOL CCalcDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CBaseDlg::OnInitDialog();
 	// TODO: 在此添加额外的初始化代码
-	if (!m_statusbar_status.Create(this) ||
-        !m_statusbar_status.SetIndicators(indicators_calc_dlg,sizeof(indicators_calc_dlg)/sizeof(UINT))
-        )
-	{
-		   TRACE0("Failed to create status bar\n");
-		   return -1;      // fail to create
-	}
-	m_statusbar_status.SetPaneInfo(0,indicators_calc_dlg[0],SBPS_STRETCH,400);	
-    
-    RepositionBars(AFX_IDW_CONTROLBAR_FIRST,AFX_IDW_CONTROLBAR_LAST,AFX_IDW_CONTROLBAR_FIRST);
-
-	setEnable(FALSE);
-	m_oper_type = OperationType::Normal;
-	m_current_index = 0;
-	SetWindowTextW(L"计算题编辑器");
-	ModifyStyleEx(0,WS_EX_APPWINDOW);
+	SetWindowTextW(L"计算题编辑器");	
+	m_lbl_no.SetWindowTextW(L"");	
 
 	m_radio_question.SetCheck(TRUE);
-	m_radio_text.SetCheck(TRUE);
+	m_radio_text.SetCheck(TRUE);	
 	OnBnClickedBtnAdd();
 	setEnable(FALSE);
-	m_oper_type = OperationType::Normal;
-	m_current_index = 0;
-	SetWindowTextW(L"计算题编辑器");
-	ModifyStyleEx(0,WS_EX_APPWINDOW);
-	m_lbl_no.SetWindowTextW(L"");
-	return TRUE;
-}
-void CCalcDlg::setEnable(BOOL enable)
-{
-	m_btn_add.EnableWindow(enable);
-	m_btn_del.EnableWindow(enable);
-	m_btn_new.EnableWindow(enable);
-	m_btn_next.EnableWindow(enable);
-	m_btn_prev.EnableWindow(enable);
-	m_btn_remove.EnableWindow(enable);
-	m_radio_answer.EnableWindow(enable);
-	m_radio_image.EnableWindow(enable);
-	m_radio_question.EnableWindow(enable);
-	m_radio_text.EnableWindow(enable);
 	
-	for(int i=0;i<m_static_edit_manager->size();i++)
-	{
-		CModelStaticEdit* model = m_static_edit_manager->at(i);
-		model->m_edit->EnableWindow(enable);
-		model->m_static->EnableWindow(enable);
-	}
+	return TRUE;
 }
 
 void CCalcDlg::OnEditChange(UINT ID)
-{
-	
+{	
 	vector<CModelStaticEdit*> *model=&m_list[m_current_index];
 	int index  = ID-EN_CHANGE_START;
-	//Util::LOG(L"edit id=%d model size=%d",ID,model->size());
+	Util::LOG(L"edit id=%d model size=%d",ID,model->size());
 	if(index+1 > model->size())
 	{
 		CModelStaticEdit* item = new CModelStaticEdit;
 		CString text;
 		m_static_edit_manager->at(index)->m_edit->GetWindowTextW(text);
-		//Util::LOG(L"text=%s",text);
 		item->m_value = text;
 		item->m_tag = m_static_edit_manager->at(index)->m_tag;
 		item->m_type = m_static_edit_manager->at(index)->m_type;
@@ -142,70 +99,12 @@ void CCalcDlg::OnEditChange(UINT ID)
 	{
 		CString text;
 		m_static_edit_manager->at(index)->m_edit->GetWindowTextW(text);
-		//Util::LOG(L"text=%s",text);
 		(*model)[index]->m_value = text;
 		(*model)[index]->m_tag = m_static_edit_manager->at(index)->m_tag;
 		(*model)[index]->m_type = m_static_edit_manager->at(index)->m_type;
 	}
 }
-BOOL CCalcDlg::PreTranslateMessage(MSG* pMsg)
-{
-	if (pMsg->message==WM_KEYDOWN)
-	{
-	BOOL bCtrl=::GetKeyState(VK_CONTROL)&0x8000;
-	BOOL bShift=::GetKeyState(VK_SHIFT)&0x8000;
 
-	// only gets here if CTRL key is pressed
-	BOOL bAlt=::GetKeyState(VK_MENU)&0x8000;
-
-		switch( pMsg->wParam )
-		{
-
-			case 'A':
-			if (bCtrl)
-			{
-				for(int i=0;i<m_static_edit_manager->size();i++)
-				{
-					m_static_edit_manager->at(i)->m_edit->SetSel(0,-1);
-				}
-			}			
-			break;
-			case 'N':
-			if (bCtrl)
-			{
-				Util::LOG(L"Ctrl+N");
-				OnMenuNew();
-			}
-			break;
-			case 'S':
-			if (bCtrl)
-			{
-				OnMenuSave();
-			}
-			break;
-			case 'O':
-			if (bCtrl)
-			{
-				OnMenuOpen();
-			}
-			break;
-			case VK_LEFT:
-			if (bCtrl)
-			{
-				OnBnClickedBtnPrev();
-			}
-			break;
-			case VK_RIGHT:
-			if (bCtrl)
-			{
-				OnBnClickedBtnNext();
-			}
-			break;
-		}
-	}
-	if(pMsg->message==WM_KEYDOWN && pMsg->wParam==VK_ESCAPE) return TRUE; 
-	return CDialog::PreTranslateMessage(pMsg);
-}
 void CCalcDlg::OnOK()
 {
  return;
@@ -541,46 +440,7 @@ void CCalcDlg::OnMenuExit()
 	// TODO: 在此添加命令处理程序代码
 	CDialog::OnCancel();
 }
-void CCalcDlg::SendMessageStatus(MSG_TYPE type,CString msg)
-{
-	SendMessage(WM_MSG_STATUS,type,(LPARAM)msg.GetBuffer());
-	msg.ReleaseBuffer();
-}
-LONG CCalcDlg::OnMessageReceive(WPARAM wParam,LPARAM lParam)
-{
-	CString msg = (TCHAR*)lParam;
-	switch(wParam)
-	{	
-	case MSG_TYPE::MSG_Processing:
-		{
-			m_statusbar_status.SetPaneText(0,L"进行中");
-			setEnable(FALSE);
-		}
-		break;
-	case MSG_TYPE::MSG_Finish:
-		{
-			setEnable(TRUE);
-
-			m_statusbar_status.SetPaneText(0,L"完成");
-			MessageBox(L"成功",L"提示");
-
-		}
-		break;
-	case MSG_TYPE::MSG_Loading:
-		{
-		    m_statusbar_status.SetPaneText(0,L"处理中");
-			setEnable(FALSE);
-		}
-		break;	
-	case MSG_TYPE::MSG_Other:
-		{
-			m_statusbar_status.SetPaneText(0,msg);
-		}
-		break;
-	}	
-	return 0;
-}
-
+	
 void CCalcDlg::updateQuestionUI()
 {
 	int maxsize = m_list.size();	
@@ -607,4 +467,56 @@ void CCalcDlg::updateQuestionUI()
 	tmp.Format(L"%d/%d",m_current_index+1,m_list.size());
 
 	m_lbl_no.SetWindowTextW(tmp);
+}
+void CCalcDlg::setEnable(BOOL enable)
+{
+	m_btn_add.EnableWindow(enable);
+	m_btn_del.EnableWindow(enable);
+	m_btn_new.EnableWindow(enable);
+	m_btn_next.EnableWindow(enable);
+	m_btn_prev.EnableWindow(enable);
+	m_btn_remove.EnableWindow(enable);
+	m_radio_answer.EnableWindow(enable);
+	m_radio_image.EnableWindow(enable);
+	m_radio_question.EnableWindow(enable);
+	m_radio_text.EnableWindow(enable);
+	
+	for(int i=0;i<m_static_edit_manager->size();i++)
+	{
+		CModelStaticEdit* model = m_static_edit_manager->at(i);
+		model->m_edit->EnableWindow(enable);
+		model->m_static->EnableWindow(enable);
+	}
+}
+void CCalcDlg::OnDropFilesEx()
+{
+	OpenFile();
+}
+
+void CCalcDlg::OnMenuNewByHotkey()
+{
+	OnMenuNew();
+}
+void CCalcDlg::OnMenuOpenByHotkey()
+{
+	OnMenuOpen();
+}
+void CCalcDlg::OnMenuSaveByHotkey()
+{
+	OnMenuSave();
+}
+void CCalcDlg::OnSelectAllByHotkey()
+{
+	for(int i=0;i<m_static_edit_manager->size();i++)
+	{
+		m_static_edit_manager->at(i)->m_edit->SetSel(0,-1);
+	}
+}
+void CCalcDlg::OnLeftByHotKey()
+{
+	//OnBnClickedBtnPrev();
+}
+void CCalcDlg::OnRightByHotKey()
+{
+	//OnBnClickedBtnNext();
 }

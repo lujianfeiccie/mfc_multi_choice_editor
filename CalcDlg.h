@@ -4,10 +4,11 @@
 #include "afxwin.h"
 #include "ModelCalc.h"
 #include <vector>
+#include "BaseDlg.h"
 using namespace std;
 // CCalcDlg 对话框
 
-class CCalcDlg : public CDialogEx
+class CCalcDlg : public CBaseDlg
 {
 	DECLARE_DYNAMIC(CCalcDlg)
 
@@ -21,12 +22,8 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 	BOOL OnInitDialog();
-	BOOL PreTranslateMessage(MSG* pMsg);
+//	BOOL PreTranslateMessage(MSG* pMsg);
 	DECLARE_MESSAGE_MAP()
-	int m_current_index;
-	CStatusBar m_statusbar_status;
-	void setEnable(BOOL enable);
-	void OnBtnClick(UINT nCmdID);
 	void OnEditChange(UINT ID);
 	CStaticEditManager* m_static_edit_manager;
 public:
@@ -52,14 +49,20 @@ public:
 	CButton m_btn_new;
 	CButton m_btn_remove;
 	CButton m_btn_add;
-	CButton m_btn_del;
+	CButton m_btn_del;	
 
-	CString m_strFileName;
-	void SendMessageStatus(MSG_TYPE type,CString msg=L"");
-	LONG OnMessageReceive(WPARAM wParam,LPARAM lParam);
-	void updateQuestionUI();
+	
 	CStatic m_lbl_no;
-	OperationType m_oper_type;
 
 	void OpenFile();
+	//Abstract method
+	 void updateQuestionUI();
+	 void setEnable(BOOL enable);
+	 void OnDropFilesEx();
+	 void OnMenuNewByHotkey();
+	 void OnMenuOpenByHotkey();
+	 void OnMenuSaveByHotkey();
+	 void OnSelectAllByHotkey();
+	 void OnLeftByHotKey();
+	 void OnRightByHotKey();
 };

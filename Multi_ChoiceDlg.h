@@ -4,17 +4,18 @@
 
 #pragma once
 #include "afxwin.h"
+#include "BaseDlg.h"
 #include <vector>
 using namespace std;
 class CModelChoice;
 
 // CMulti_ChoiceDlg 对话框
-class CMulti_ChoiceDlg : public CDialogEx
+class CMulti_ChoiceDlg : public CBaseDlg
 {
 // 构造
 public:
 	CMulti_ChoiceDlg(CWnd* pParent = NULL);	// 标准构造函数
-
+	virtual ~CMulti_ChoiceDlg();
 // 对话框数据
 	enum { IDD = IDD_MULTI_CHOICE_DIALOG };
 
@@ -33,8 +34,6 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	CStatusBar m_statusbar_status;
-	BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnMenuExit();
 	
 	afx_msg void OnMenuSave();
@@ -52,41 +51,46 @@ public:
 	CButton m_btn_next;
 	CButton m_btn_prev;
 	vector<CModelChoice*> m_list;
-	int m_current_index;
+	
 	CButton m_radio_answer1;
 	CButton m_radio_answer2;
 	CButton m_radio_answer3;
 	CButton m_radio_answer4;
 	CButton m_btn_note;
 
-	void updateQuestionUI();
 	afx_msg void OnBnClickedBtnPrev();
 	afx_msg void OnBnClickedBtnNext();
 	CStatic m_lbl_no;
 	afx_msg void OnBnClickedBtnNote();
 	afx_msg void OnMenuNew();
 
-	OperationType m_oper_type;
 	afx_msg void OnBnClickedRadioAnswer1();
 	afx_msg void OnBnClickedRadioAnswer2();
 	afx_msg void OnBnClickedRadioAnswer3();
 	afx_msg void OnBnClickedRadioAnswer4();
 
-	CString m_strFileName;
 	afx_msg void OnBnClickedBtnNew();
 	afx_msg void OnBnClickedBtnDel();
 	CButton m_btn_new;
 	CButton m_btn_del;
 
-	void setEnable(BOOL enable);
 	afx_msg void OnEnChangeEditTitle();
 	afx_msg void OnEnChangeEditChoice1();
 	afx_msg void OnEnChangeEditChoice2();
 	afx_msg void OnEnChangeEditChoice3();
 	afx_msg void OnEnChangeEditChoice4();
-	void SendMessageStatus(MSG_TYPE type,CString msg=L"");
-	LONG OnMessageReceive(WPARAM wParam,LPARAM lParam);
 	virtual void OnClose();
-	afx_msg void OnDropFiles(HDROP hDropInfo);
 	void OpenFile();
+
+
+	//Abstract method
+	 void updateQuestionUI();
+	 void setEnable(BOOL enable);
+	 void OnDropFilesEx();
+	 void OnMenuNewByHotkey();
+	 void OnMenuOpenByHotkey();
+	 void OnMenuSaveByHotkey();
+	 void OnSelectAllByHotkey();
+	 void OnLeftByHotKey();
+	 void OnRightByHotKey();
 };

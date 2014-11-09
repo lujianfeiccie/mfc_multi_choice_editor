@@ -13,11 +13,6 @@
 #define new DEBUG_NEW
 #endif
 
-UINT indicators_multi_choice_dlg[]={
-IDS_STRING_STATUS
-};
-
-
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
 class CAboutDlg : public CDialogEx
@@ -63,14 +58,14 @@ BOOL CAboutDlg::OnInitDialog()
 
 
 CMulti_ChoiceDlg::CMulti_ChoiceDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CMulti_ChoiceDlg::IDD, pParent)
+	: CBaseDlg(CMulti_ChoiceDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
 void CMulti_ChoiceDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	CBaseDlg::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT_TITLE, m_edit_title);
 	DDX_Control(pDX, IDC_EDIT_CHOICE1, m_edit_choice1);
 	DDX_Control(pDX, IDC_EDIT_CHOICE2, m_edit_choice2);
@@ -94,7 +89,7 @@ void CMulti_ChoiceDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CMulti_ChoiceDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CMulti_ChoiceDlg, CBaseDlg)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
@@ -116,9 +111,7 @@ BEGIN_MESSAGE_MAP(CMulti_ChoiceDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_CHOICE2, &CMulti_ChoiceDlg::OnEnChangeEditChoice2)
 	ON_EN_CHANGE(IDC_EDIT_CHOICE3, &CMulti_ChoiceDlg::OnEnChangeEditChoice3)
 	ON_EN_CHANGE(IDC_EDIT_CHOICE4, &CMulti_ChoiceDlg::OnEnChangeEditChoice4)
-	ON_MESSAGE(WM_MSG_STATUS,&CMulti_ChoiceDlg::OnMessageReceive)
 	ON_WM_CLOSE()	
-	ON_WM_DROPFILES()
 END_MESSAGE_MAP()
 
 
@@ -126,7 +119,7 @@ END_MESSAGE_MAP()
 
 BOOL CMulti_ChoiceDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CBaseDlg::OnInitDialog();
 
 	// 将“关于...”菜单项添加到系统菜单中。
 
@@ -154,18 +147,6 @@ BOOL CMulti_ChoiceDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
-	if (!m_statusbar_status.Create(this) ||
-        !m_statusbar_status.SetIndicators(indicators_multi_choice_dlg,sizeof(indicators_multi_choice_dlg)/sizeof(UINT))
-        )
-	{
-		   TRACE0("Failed to create status bar\n");
-		   return -1;      // fail to create
-	}
-	m_statusbar_status.SetPaneInfo(0,indicators_multi_choice_dlg[0],SBPS_STRETCH,400);	
-    
-    RepositionBars(AFX_IDW_CONTROLBAR_FIRST,AFX_IDW_CONTROLBAR_LAST,AFX_IDW_CONTROLBAR_FIRST);
-
-	
 	CRect rect_edit_title = Util::getControlPosition(m_edit_title,this);
 	CRect rect_lbl_title = Util::getControlPosition(m_lbl_title,this);
 	Util::setControlPosition(m_lbl_title,this,rect_lbl_title.left,rect_edit_title.top);
@@ -221,16 +202,12 @@ BOOL CMulti_ChoiceDlg::OnInitDialog()
 	//Util::LOG(L"%d",rect_choice.bottom);
 	//Util::LOG(L"(%d,%d) (%d,%d)",rect.left,rect.top,rect.right,rect.bottom);
 
-	m_current_index = 0;
 
 	CRect rect_radio1 = Util::getControlPosition(m_radio_answer1,this);
 	Util::setControlPosition(m_btn_note,this,rect_radio1.right+10,rect_radio1.top);
 
 
-	m_oper_type = OperationType::Normal;
 	setEnable(FALSE);
-	//OnMenuLoad();
-	 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -283,66 +260,6 @@ HCURSOR CMulti_ChoiceDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-BOOL CMulti_ChoiceDlg::PreTranslateMessage(MSG* pMsg)
-{
-	if (pMsg->message==WM_KEYDOWN)
-	{
-	BOOL bCtrl=::GetKeyState(VK_CONTROL)&0x8000;
-	BOOL bShift=::GetKeyState(VK_SHIFT)&0x8000;
-
-	// only gets here if CTRL key is pressed
-	BOOL bAlt=::GetKeyState(VK_MENU)&0x8000;
-
-		switch( pMsg->wParam )
-		{
-
-			case 'A':
-			if (bCtrl)
-			{
-				m_edit_title.SetSel(0,-1);
-				m_edit_choice1.SetSel(0,-1);
-				m_edit_choice2.SetSel(0,-1);
-				m_edit_choice3.SetSel(0,-1);
-				m_edit_choice4.SetSel(0,-1);
-			}
-			break;
-			case 'N':
-			if (bCtrl)
-			{
-				OnMenuNew();
-			}
-			break;
-			case 'S':
-			if (bCtrl)
-			{
-				OnMenuSave();
-			}
-			break;
-			case 'O':
-			if (bCtrl)
-			{
-				OnMenuLoad();
-			}
-			break;
-			case VK_LEFT:
-			if (bCtrl)
-			{
-				OnBnClickedBtnPrev();
-			}
-			break;
-			case VK_RIGHT:
-			if (bCtrl)
-			{
-				OnBnClickedBtnNext();
-			}
-			break;
-		}
-	}
-	if(pMsg->message==WM_KEYDOWN && pMsg->wParam==VK_ESCAPE) return TRUE; 
-
-return CDialog::PreTranslateMessage(pMsg);
-}
 void CMulti_ChoiceDlg::OnMenuExit()
 {
 	// TODO: 在此添加命令处理程序代码
@@ -444,55 +361,6 @@ void CMulti_ChoiceDlg::OnMenuLoad()
 		m_strFileName = FileDlg.GetPathName();
 
 	OpenFile();
-}
-void CMulti_ChoiceDlg::updateQuestionUI()
-{
-	int maxsize = m_list.size();
-	if(m_current_index>= maxsize){
-		--m_current_index;
-	}
-	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
-	m_edit_title.SetWindowTextW(model->m_title);
-	m_edit_choice1.SetWindowTextW(model->m_choices[0]);
-	m_edit_choice2.SetWindowTextW(model->m_choices[1]);
-	m_edit_choice3.SetWindowTextW(model->m_choices[2]);
-	m_edit_choice4.SetWindowTextW(model->m_choices[3]);
-	
-	if(model->m_choices[0].Trim()==model->m_answer.Trim())
-	{
-		m_radio_answer1.SetCheck(TRUE);
-
-		m_radio_answer2.SetCheck(FALSE);
-		m_radio_answer3.SetCheck(FALSE);
-		m_radio_answer4.SetCheck(FALSE);
-	}
-	else if(model->m_choices[1].Trim()==model->m_answer.Trim())
-	{
-		m_radio_answer2.SetCheck(TRUE);
-
-		m_radio_answer1.SetCheck(FALSE);
-		m_radio_answer3.SetCheck(FALSE);
-		m_radio_answer4.SetCheck(FALSE);
-	}
-	else if(model->m_choices[2].Trim()==model->m_answer.Trim())
-	{
-		m_radio_answer3.SetCheck(TRUE);
-
-		m_radio_answer2.SetCheck(FALSE);
-		m_radio_answer1.SetCheck(FALSE);
-		m_radio_answer4.SetCheck(FALSE);
-	}
-	else
-	{
-		m_radio_answer4.SetCheck(TRUE);
-
-		m_radio_answer2.SetCheck(FALSE);
-		m_radio_answer3.SetCheck(FALSE);
-		m_radio_answer1.SetCheck(FALSE);
-	}
-	CString tmp;
-	tmp.Format(L"%d/%d",m_current_index+1,m_list.size());
-	m_lbl_no.SetWindowTextW(tmp);
 }
 
 void CMulti_ChoiceDlg::OnBnClickedBtnPrev()
@@ -644,25 +512,6 @@ void CMulti_ChoiceDlg::OnBnClickedBtnDel()
 	updateQuestionUI();
 	}
 }
-void CMulti_ChoiceDlg::setEnable(BOOL enable)
-{
-	m_edit_title.EnableWindow(enable);
-	m_edit_choice1.EnableWindow(enable);
-	m_edit_choice2.EnableWindow(enable);
-	m_edit_choice3.EnableWindow(enable);
-	m_edit_choice4.EnableWindow(enable);
-	m_btn_del.EnableWindow(enable);
-	m_btn_new.EnableWindow(enable);
-	m_btn_next.EnableWindow(enable);
-	m_btn_note.EnableWindow(enable);
-	m_btn_prev.EnableWindow(enable);	
-	m_radio_answer1.EnableWindow(enable);
-	m_radio_answer2.EnableWindow(enable);
-	m_radio_answer3.EnableWindow(enable);
-	m_radio_answer4.EnableWindow(enable);
-
-}
-
 void CMulti_ChoiceDlg::OnEnChangeEditTitle()
 {
 	// TODO:  如果该控件是 RICHEDIT 控件，它将不
@@ -757,62 +606,10 @@ void CMulti_ChoiceDlg::OnEnChangeEditChoice4()
 		model->m_answer = choice;
 	}
 }
-void CMulti_ChoiceDlg::SendMessageStatus(MSG_TYPE type,CString msg)
-{
-	SendMessage(WM_MSG_STATUS,type,(LPARAM)msg.GetBuffer());
-	msg.ReleaseBuffer();
-}
-LONG CMulti_ChoiceDlg::OnMessageReceive(WPARAM wParam,LPARAM lParam)
-{
-	CString msg = (TCHAR*)lParam;
-	switch(wParam)
-	{	
-	case MSG_TYPE::MSG_Processing:
-		{
-			m_statusbar_status.SetPaneText(0,L"进行中");
-			setEnable(FALSE);
-		}
-		break;
-	case MSG_TYPE::MSG_Finish:
-		{
-			setEnable(TRUE);
-
-			m_statusbar_status.SetPaneText(0,L"完成");
-			MessageBox(L"成功",L"提示");
-
-		}
-		break;
-	case MSG_TYPE::MSG_Loading:
-		{
-		    m_statusbar_status.SetPaneText(0,L"处理中");
-			setEnable(FALSE);
-		}
-		break;	
-	case MSG_TYPE::MSG_Other:
-		{
-			m_statusbar_status.SetPaneText(0,msg);
-		}
-		break;
-	}	
-	return 0;
-}
 
 void CMulti_ChoiceDlg::OnClose()
 {
 	CDialog::OnClose();
-	m_list.clear();	
-}
-
-void CMulti_ChoiceDlg::OnDropFiles(HDROP hDropInfo)
-{
-	//Util::LOG(L"OnDropFiles");
-	TCHAR FileName[512];
-	memset(FileName,0,512 * sizeof(TCHAR));
-    UINT nChars= ::DragQueryFile( hDropInfo, 0 ,FileName , 512 * sizeof( TCHAR ) );
-
-	m_strFileName = FileName;
-	OpenFile();
-    ::DragFinish( hDropInfo ); 
 }
 
 void CMulti_ChoiceDlg::OpenFile()
@@ -875,4 +672,111 @@ void CMulti_ChoiceDlg::OpenFile()
 	m_current_index = 0;
 	updateQuestionUI();
 	SendMessageStatus(MSG_TYPE::MSG_Finish);
+}
+
+
+ 
+void CMulti_ChoiceDlg::updateQuestionUI()
+{
+	int maxsize = m_list.size();
+	if(m_current_index>= maxsize){
+		--m_current_index;
+	}
+	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
+	m_edit_title.SetWindowTextW(model->m_title);
+	m_edit_choice1.SetWindowTextW(model->m_choices[0]);
+	m_edit_choice2.SetWindowTextW(model->m_choices[1]);
+	m_edit_choice3.SetWindowTextW(model->m_choices[2]);
+	m_edit_choice4.SetWindowTextW(model->m_choices[3]);
+	
+	if(model->m_choices[0].Trim()==model->m_answer.Trim())
+	{
+		m_radio_answer1.SetCheck(TRUE);
+
+		m_radio_answer2.SetCheck(FALSE);
+		m_radio_answer3.SetCheck(FALSE);
+		m_radio_answer4.SetCheck(FALSE);
+	}
+	else if(model->m_choices[1].Trim()==model->m_answer.Trim())
+	{
+		m_radio_answer2.SetCheck(TRUE);
+
+		m_radio_answer1.SetCheck(FALSE);
+		m_radio_answer3.SetCheck(FALSE);
+		m_radio_answer4.SetCheck(FALSE);
+	}
+	else if(model->m_choices[2].Trim()==model->m_answer.Trim())
+	{
+		m_radio_answer3.SetCheck(TRUE);
+
+		m_radio_answer2.SetCheck(FALSE);
+		m_radio_answer1.SetCheck(FALSE);
+		m_radio_answer4.SetCheck(FALSE);
+	}
+	else
+	{
+		m_radio_answer4.SetCheck(TRUE);
+
+		m_radio_answer2.SetCheck(FALSE);
+		m_radio_answer3.SetCheck(FALSE);
+		m_radio_answer1.SetCheck(FALSE);
+	}
+	CString tmp;
+	tmp.Format(L"%d/%d",m_current_index+1,m_list.size());
+	m_lbl_no.SetWindowTextW(tmp);
+}
+
+void CMulti_ChoiceDlg::setEnable(BOOL enable)
+{
+	m_edit_title.EnableWindow(enable);
+	m_edit_choice1.EnableWindow(enable);
+	m_edit_choice2.EnableWindow(enable);
+	m_edit_choice3.EnableWindow(enable);
+	m_edit_choice4.EnableWindow(enable);
+	m_btn_del.EnableWindow(enable);
+	m_btn_new.EnableWindow(enable);
+	m_btn_next.EnableWindow(enable);
+	m_btn_note.EnableWindow(enable);
+	m_btn_prev.EnableWindow(enable);	
+	m_radio_answer1.EnableWindow(enable);
+	m_radio_answer2.EnableWindow(enable);
+	m_radio_answer3.EnableWindow(enable);
+	m_radio_answer4.EnableWindow(enable);
+
+}
+void CMulti_ChoiceDlg::OnDropFilesEx()
+{
+	OpenFile();
+}
+void CMulti_ChoiceDlg::OnMenuNewByHotkey()
+{
+	OnMenuNew();
+}
+void CMulti_ChoiceDlg::OnMenuOpenByHotkey()
+{
+	OnMenuLoad();
+}
+void CMulti_ChoiceDlg::OnMenuSaveByHotkey()
+{
+	OnMenuSave();
+}
+void CMulti_ChoiceDlg::OnSelectAllByHotkey()
+{
+	m_edit_title.SetSel(0,-1);
+	m_edit_choice1.SetSel(0,-1);
+	m_edit_choice2.SetSel(0,-1);
+	m_edit_choice3.SetSel(0,-1);
+	m_edit_choice4.SetSel(0,-1);
+}
+void CMulti_ChoiceDlg::OnLeftByHotKey()
+{
+	OnBnClickedBtnPrev();
+}
+void CMulti_ChoiceDlg::OnRightByHotKey()
+{
+	OnBnClickedBtnNext();
+}
+CMulti_ChoiceDlg::~CMulti_ChoiceDlg()
+{
+	m_list.clear();	
 }
