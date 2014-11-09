@@ -55,6 +55,7 @@ public:
 	CStatic m_lbl_no;
 
 	void OpenFile();
+	 void OnSizingEx(CRect Rect);
 	//Abstract method
 	 void updateQuestionUI();
 	 void setEnable(BOOL enable);
@@ -65,4 +66,5 @@ public:
 	 void OnSelectAllByHotkey();
 	 void OnLeftByHotKey();
 	 void OnRightByHotKey();
-};
+
+  };

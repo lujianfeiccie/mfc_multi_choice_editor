@@ -17,6 +17,7 @@ void CBaseDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CBaseDlg, CDialogEx)	
 	ON_MESSAGE(WM_MSG_STATUS,&CBaseDlg::OnMessageReceive)
 	ON_WM_DROPFILES()
+	ON_WM_SIZING()
 END_MESSAGE_MAP()
 
 CBaseDlg::CBaseDlg(UINT nIDTemplate, CWnd *pParent):CDialogEx(nIDTemplate,pParent)
@@ -50,6 +51,8 @@ BOOL CBaseDlg::OnInitDialog()
 	DragAcceptFiles();
 
 	setEnable(FALSE);
+
+	 
 	return TRUE;
 }
 
@@ -164,4 +167,24 @@ BOOL CBaseDlg::PreTranslateMessage(MSG* pMsg)
 	}
 	if(pMsg->message==WM_KEYDOWN && pMsg->wParam==VK_ESCAPE) return TRUE; 
 	return CDialog::PreTranslateMessage(pMsg);
+}
+
+void CBaseDlg::OnSizing(UINT fwSide, LPRECT pRect)
+{
+	CDialogEx::OnSizing(fwSide, pRect);
+
+	// TODO: 在此处添加消息处理程序代码
+	//Util::LOG(L"sizeing");
+	CRect rect = CRect(pRect);
+	ScreenToClient(rect);
+	//Util::LOG(L"(%d,%d) (%d,%d)",rect.left,rect.top,rect.right,rect.bottom);	
+	CRect rect_status = Util::getControlPosition(m_statusbar_status,this);
+	//For statusbar
+	Util::setControlPosition(m_statusbar_status,this,0,rect.bottom - rect_status.Height()-10);
+
+	OnSizingEx(rect);
+}
+void CBaseDlg::OnSizingEx(CRect Rect)
+{
+
 }

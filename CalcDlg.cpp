@@ -60,6 +60,7 @@ BEGIN_MESSAGE_MAP(CCalcDlg, CBaseDlg)
 	ON_COMMAND(ID_32785, &CCalcDlg::OnMenuExit)
 	/*ON_MESSAGE(WM_MSG_STATUS,&CCalcDlg::OnMessageReceive)
 	ON_WM_DROPFILES()*/
+	
 END_MESSAGE_MAP()
 
 
@@ -74,8 +75,8 @@ BOOL CCalcDlg::OnInitDialog()
 
 	m_radio_question.SetCheck(TRUE);
 	m_radio_text.SetCheck(TRUE);	
-	OnBnClickedBtnAdd();
-	setEnable(FALSE);
+	//OnBnClickedBtnAdd();
+	//setEnable(FALSE);
 	
 	return TRUE;
 }
@@ -132,6 +133,12 @@ void CCalcDlg::OnBnClickedBtnAdd()
 		tag = TAG::TAG_ANSWER;
 	}
 	m_static_edit_manager->add(type,tag);
+	vector<CModelStaticEdit*> *model=&m_list[m_current_index];
+	CModelStaticEdit* item = new CModelStaticEdit;
+	item->m_tag = tag;
+	item->m_type = type;
+	item->m_value=L"";
+	model->push_back(item);
 }
 
 
@@ -394,9 +401,6 @@ UINT ThreadSaveInCalc(LPVOID lPvoid)
 			xml.AddAttrib(L"value",value);		
 		}
 		//for end
-//		answer.Replace(L"\r\n",L"&#x0A;");
-	//	xml.AddAttrib(L"value",answer);
-		//Util::LOG(L"answer=%s",model->m_answer);
 		xml.OutOfElem();	
 
 	}
@@ -519,4 +523,31 @@ void CCalcDlg::OnLeftByHotKey()
 void CCalcDlg::OnRightByHotKey()
 {
 	//OnBnClickedBtnNext();
+}
+
+
+void CCalcDlg::OnSizingEx(CRect rect)
+{
+	//Util::LOG(L"OnSizingEx");
+	CRect rect_prev = Util::getControlPosition(m_btn_prev,this);
+	CRect rect_next = Util::getControlPosition(m_btn_next,this);
+
+	CRect rect_new = Util::getControlPosition(m_btn_new,this);
+	CRect rect_remove = Util::getControlPosition(m_btn_remove,this);
+
+
+	CRect rect_status = Util::getControlPosition(m_statusbar_status,this);
+	int offset_y  = rect.bottom-rect_status.Height()-10-rect_prev.Height();
+
+	Util::setControlPosition(m_btn_prev,this,
+		rect_prev.left,offset_y);
+
+	Util::setControlPosition(m_btn_next,this,
+		rect_next.left,offset_y);
+
+	Util::setControlPosition(m_btn_new,this,
+		rect_new.left,offset_y);
+
+	Util::setControlPosition(m_btn_remove,this,
+		rect_remove.left,offset_y);
 }

@@ -22,8 +22,12 @@ public:
 	LONG OnMessageReceive(WPARAM wParam,LPARAM lParam);
 
 	void OnDropFiles(HDROP hDropInfo);
-
+	afx_msg void OnSizing(UINT fwSide, LPRECT pRect);
+	
 	BOOL PreTranslateMessage(MSG* pMsg);
+	
+	virtual void OnSizingEx(CRect Rect);
+
 	virtual void updateQuestionUI()=0;
 	virtual void setEnable(BOOL enable)=0;
 	virtual void OnDropFilesEx()=0;
