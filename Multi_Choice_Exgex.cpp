@@ -1,6 +1,5 @@
 #include "StdAfx.h"
 #include "Multi_Choice_Exgex.h"
-#include <atlrx.h>
 #include <regex>
 CMulti_Choice_Exgex::CMulti_Choice_Exgex(void)
 {
@@ -36,6 +35,15 @@ void stringToCString(wstring str,CString &cstr)
 {
 	 cstr.Format(L"%s",str.c_str());
 	 cstr.Replace(L"\n",L"");
+	 cstr.Replace(L"A.",L"");
+	 cstr.Replace(L"B.",L"");
+	 cstr.Replace(L"C.",L"");
+	 cstr.Replace(L"D.",L"");
+
+	 cstr.Replace(L"Aго",L"");
+	 cstr.Replace(L"Bго",L"");
+	 cstr.Replace(L"Cго",L"");
+	 cstr.Replace(L"Dго",L"");
 	 cstr=cstr.Trim();
 }
 void CMulti_Choice_Exgex::Parse(CString source)
@@ -48,23 +56,23 @@ void CMulti_Choice_Exgex::Parse(CString source)
 	 vector<wstring> result_itemC;
 	 vector<wstring> result_itemD;
 		CommonParse(source,
-			    L"(\\d+.*\r\n)",//Title  L"(\\d+.*\r\n)",  
+			    L"(\\d+[\\.\\го].*)",//Title  L"(\\d+.*\r\n)",  
 								//A (?<=\n)A.*(?=\n)
 								//B (\nB.*\r\n)
 								//C (\nC.*\r\n)
 								//D (\nB.*\r\n)
 			    result_title);
 		CommonParse(source,
-			    L"(\nA.*)",
+			    L"(A[\\.\\го].*)",
 			    result_itemA);
 		CommonParse(source,
-			    L"(\nB.*)",
+			    L"(B[\\.\\го].*)",
 			    result_itemB);
 		CommonParse(source,
-			    L"(\nC.*)",
+			    L"(C[\\.\\го].*)",
 			    result_itemC);
 		CommonParse(source,
-			    L"(\nD.*)",
+			    L"(D[\\.\\го].*)",
 			    result_itemD);
 
    for(int i=0;i<result_title.size();++i)

@@ -828,5 +828,6 @@ void CMulti_ChoiceDlg::OnMenuImport()
 		m_strFileName = FileDlg.GetPathName();
 		//C:\Users\John\Desktop\autotxt_unicode.txt
 	//m_strFileName = L"C:\\Users\\John\\Desktop\\autotxt_unicode.txt";
+	//	m_strFileName = L"C:\\Users\\John\\Desktop\\09组织行为学.txt";
 	ImportFile();
 }
