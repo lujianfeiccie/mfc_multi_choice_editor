@@ -41,6 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -111,6 +112,7 @@
     <ClInclude Include="ModelChoice.h" />
     <ClInclude Include="Multi_Choice.h" />
     <ClInclude Include="Multi_ChoiceDlg.h" />
+    <ClInclude Include="Multi_Choice_Exgex.h" />
     <ClInclude Include="NoteEditorDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StaticEditManager.h" />
@@ -131,6 +133,7 @@
     <ClCompile Include="ModelChoice.cpp" />
     <ClCompile Include="Multi_Choice.cpp" />
     <ClCompile Include="Multi_ChoiceDlg.cpp" />
+    <ClCompile Include="Multi_Choice_Exgex.cpp" />
     <ClCompile Include="NoteEditorDlg.cpp" />
     <ClCompile Include="StaticEditManager.cpp" />
     <ClCompile Include="stdafx.cpp">

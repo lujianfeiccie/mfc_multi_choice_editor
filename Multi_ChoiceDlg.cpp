@@ -9,6 +9,7 @@
 #include "afxwin.h"
 #include "NoteEditorDlg.h"
 #include "MainDlg.h"
+#include "Multi_Choice_Exgex.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -112,6 +113,7 @@ BEGIN_MESSAGE_MAP(CMulti_ChoiceDlg, CBaseDlg)
 	ON_EN_CHANGE(IDC_EDIT_CHOICE3, &CMulti_ChoiceDlg::OnEnChangeEditChoice3)
 	ON_EN_CHANGE(IDC_EDIT_CHOICE4, &CMulti_ChoiceDlg::OnEnChangeEditChoice4)
 	ON_WM_CLOSE()	
+	ON_COMMAND(ID__32786, &CMulti_ChoiceDlg::OnMenuImport)
 END_MESSAGE_MAP()
 
 
@@ -461,7 +463,7 @@ void CMulti_ChoiceDlg::OnBnClickedRadioAnswer1()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
-	model->m_answer = model->m_choices[0];
+	model->m_answer = model->m_choices[0].Trim();
 }
 
 
@@ -469,7 +471,7 @@ void CMulti_ChoiceDlg::OnBnClickedRadioAnswer2()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
-	model->m_answer = model->m_choices[1];
+	model->m_answer = model->m_choices[1].Trim();
 }
 
 
@@ -477,7 +479,7 @@ void CMulti_ChoiceDlg::OnBnClickedRadioAnswer3()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
-	model->m_answer = model->m_choices[2];
+	model->m_answer = model->m_choices[2].Trim();
 }
 
 
@@ -485,7 +487,7 @@ void CMulti_ChoiceDlg::OnBnClickedRadioAnswer4()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	CModelChoice* model = (CModelChoice*)m_list[m_current_index];
-	model->m_answer = model->m_choices[3];
+	model->m_answer = model->m_choices[3].Trim();
 }
 
 
@@ -674,7 +676,40 @@ void CMulti_ChoiceDlg::OpenFile()
 	SendMessageStatus(MSG_TYPE::MSG_Finish);
 }
 
+void CMulti_ChoiceDlg::ImportFile()
+{
+	if(m_strFileName.Right(4)!=L".txt")
+	{
+		MessageBox(L"格式有误");
+		return;
+	}
+	CString text;
+	CFile ReadF(m_strFileName,CFile::modeRead);
+	TCHAR* temp=new TCHAR[ReadF.GetLength()/2+1];
+	ReadF.Read(temp,ReadF.GetLength());
+	temp[ReadF.GetLength()/2]=0;
 
+	BOOL flag = Util::isUnicodeFile(temp);
+	Util::LOG(L"flag=%d",flag);
+	text = temp;
+	ReadF.Close();
+	delete []temp;
+
+	if(!flag)
+	{
+		MessageBox(L"该文件不是Unicode编码,请另存为Unicode编码");
+		return;
+	}
+	m_oper_type = OperationType::New;
+	SendMessageStatus(MSG_TYPE::MSG_Loading);
+
+	CMulti_Choice_Exgex exgex;
+	exgex.Parse(text);
+	m_list = exgex.m_list;
+
+	updateQuestionUI();
+	SendMessageStatus(MSG_TYPE::MSG_Finish);
+}
  
 void CMulti_ChoiceDlg::updateQuestionUI()
 {
@@ -779,4 +814,19 @@ void CMulti_ChoiceDlg::OnRightByHotKey()
 CMulti_ChoiceDlg::~CMulti_ChoiceDlg()
 {
 	m_list.clear();	
+}
+
+
+void CMulti_ChoiceDlg::OnMenuImport()
+{
+	// TODO: 在此添加命令处理程序代码
+	CString strFilter = _T("txt files(*.txt)|*.txt||");
+	CFileDialog FileDlg(true,NULL,NULL,
+						OFN_HIDEREADONLY|OFN_OVERWRITEPROMPT,
+						strFilter,this);
+	if(FileDlg.DoModal()!=IDOK) return;
+		m_strFileName = FileDlg.GetPathName();
+		//C:\Users\John\Desktop\autotxt_unicode.txt
+	//m_strFileName = L"C:\\Users\\John\\Desktop\\autotxt_unicode.txt";
+	ImportFile();
 }

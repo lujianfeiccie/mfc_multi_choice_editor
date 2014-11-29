@@ -81,7 +81,7 @@ public:
 	afx_msg void OnEnChangeEditChoice4();
 	virtual void OnClose();
 	void OpenFile();
-
+	void ImportFile();
 
 	//Abstract method
 	 void updateQuestionUI();
@@ -93,4 +93,5 @@ public:
 	 void OnSelectAllByHotkey();
 	 void OnLeftByHotKey();
 	 void OnRightByHotKey();
+	 afx_msg void OnMenuImport();
 };
