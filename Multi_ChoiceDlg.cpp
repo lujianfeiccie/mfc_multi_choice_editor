@@ -748,12 +748,19 @@ void CMulti_ChoiceDlg::updateQuestionUI()
 		m_radio_answer1.SetCheck(FALSE);
 		m_radio_answer4.SetCheck(FALSE);
 	}
-	else
+	else if(model->m_choices[3].Trim()==model->m_answer.Trim())
 	{
 		m_radio_answer4.SetCheck(TRUE);
 
 		m_radio_answer2.SetCheck(FALSE);
 		m_radio_answer3.SetCheck(FALSE);
+		m_radio_answer1.SetCheck(FALSE);
+	}
+	else
+	{
+		m_radio_answer4.SetCheck(FALSE);
+		m_radio_answer3.SetCheck(FALSE);
+		m_radio_answer2.SetCheck(FALSE);
 		m_radio_answer1.SetCheck(FALSE);
 	}
 	CString tmp;
