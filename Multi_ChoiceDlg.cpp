@@ -724,44 +724,54 @@ void CMulti_ChoiceDlg::updateQuestionUI()
 	m_edit_choice3.SetWindowTextW(model->m_choices[2]);
 	m_edit_choice4.SetWindowTextW(model->m_choices[3]);
 	
-	if(model->m_choices[0].Trim()==model->m_answer.Trim())
+	if(model->m_answer.Trim() == L"")
 	{
-		m_radio_answer1.SetCheck(TRUE);
-
-		m_radio_answer2.SetCheck(FALSE);
-		m_radio_answer3.SetCheck(FALSE);
 		m_radio_answer4.SetCheck(FALSE);
-	}
-	else if(model->m_choices[1].Trim()==model->m_answer.Trim())
-	{
-		m_radio_answer2.SetCheck(TRUE);
-
-		m_radio_answer1.SetCheck(FALSE);
 		m_radio_answer3.SetCheck(FALSE);
-		m_radio_answer4.SetCheck(FALSE);
-	}
-	else if(model->m_choices[2].Trim()==model->m_answer.Trim())
-	{
-		m_radio_answer3.SetCheck(TRUE);
-
 		m_radio_answer2.SetCheck(FALSE);
-		m_radio_answer1.SetCheck(FALSE);
-		m_radio_answer4.SetCheck(FALSE);
-	}
-	else if(model->m_choices[3].Trim()==model->m_answer.Trim())
-	{
-		m_radio_answer4.SetCheck(TRUE);
-
-		m_radio_answer2.SetCheck(FALSE);
-		m_radio_answer3.SetCheck(FALSE);
 		m_radio_answer1.SetCheck(FALSE);
 	}
 	else
 	{
-		m_radio_answer4.SetCheck(FALSE);
-		m_radio_answer3.SetCheck(FALSE);
-		m_radio_answer2.SetCheck(FALSE);
-		m_radio_answer1.SetCheck(FALSE);
+		if(model->m_choices[0].Trim()==model->m_answer.Trim())
+		{
+			m_radio_answer1.SetCheck(TRUE);
+
+			m_radio_answer2.SetCheck(FALSE);
+			m_radio_answer3.SetCheck(FALSE);
+			m_radio_answer4.SetCheck(FALSE);
+		}
+		else if(model->m_choices[1].Trim()==model->m_answer.Trim())
+		{
+			m_radio_answer2.SetCheck(TRUE);
+
+			m_radio_answer1.SetCheck(FALSE);
+			m_radio_answer3.SetCheck(FALSE);
+			m_radio_answer4.SetCheck(FALSE);
+		}
+		else if(model->m_choices[2].Trim()==model->m_answer.Trim())
+		{
+			m_radio_answer3.SetCheck(TRUE);
+
+			m_radio_answer2.SetCheck(FALSE);
+			m_radio_answer1.SetCheck(FALSE);
+			m_radio_answer4.SetCheck(FALSE);
+		}
+		else if(model->m_choices[3].Trim()==model->m_answer.Trim())
+		{
+			m_radio_answer4.SetCheck(TRUE);
+
+			m_radio_answer2.SetCheck(FALSE);
+			m_radio_answer3.SetCheck(FALSE);
+			m_radio_answer1.SetCheck(FALSE);
+		}
+		else
+		{
+			m_radio_answer4.SetCheck(FALSE);
+			m_radio_answer3.SetCheck(FALSE);
+			m_radio_answer2.SetCheck(FALSE);
+			m_radio_answer1.SetCheck(FALSE);
+		}
 	}
 	CString tmp;
 	tmp.Format(L"%d/%d",m_current_index+1,m_list.size());
