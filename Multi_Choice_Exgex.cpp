@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "Multi_Choice_Exgex.h"
 #include <regex>
 CMulti_Choice_Exgex::CMulti_Choice_Exgex(void)
@@ -18,15 +18,15 @@ void CommonParse(CString source, CString regex,vector<wstring> &vl)
 
 	  wstring strInput = source;
 
-	  std::wstring::const_iterator it=strInput.begin();//È¡Í·  
-	  std::wstring::const_iterator end=strInput.end();//È¡Î²
+	  std::wstring::const_iterator it=strInput.begin();//å–å¤´  
+	  std::wstring::const_iterator end=strInput.end();//å–å°¾
 
 	  
 	   if (regex_search(strInput,results,strRegex))  
 	   {    
 		   while (regex_search(it,end,results,strRegex))  
 		   {    
-			   vl.push_back(results[1]);//ÕâÀï¾ÍµÃµ½·Ö×é1    	
+			   vl.push_back(results[1]);//è¿™é‡Œå°±å¾—åˆ°åˆ†ç»„1    	
 			   it=results[0].second; 
 		   }
 	   }
@@ -40,39 +40,53 @@ void stringToCString(wstring str,CString &cstr)
 	 cstr.Replace(L"C.",L"");
 	 cstr.Replace(L"D.",L"");
 
-	 cstr.Replace(L"A£®",L"");
-	 cstr.Replace(L"B£®",L"");
-	 cstr.Replace(L"C£®",L"");
-	 cstr.Replace(L"D£®",L"");
+	 cstr.Replace(L"Aï¼",L"");
+	 cstr.Replace(L"Bï¼",L"");
+	 cstr.Replace(L"Cï¼",L"");
+	 cstr.Replace(L"Dï¼",L"");
 	 cstr=cstr.Trim();
 }
 void CMulti_Choice_Exgex::Parse(CString source)
 {
 	m_list.clear();
-
+	//Preprocess é¢„å¤„ç†
+	source.Replace(L" ",L"");
+	source.Replace(L"Â ",L"");
+	source.Replace(L"()",L"");
+	source.Replace(L"ï¼ˆï¼‰",L"");
+	source.Replace(L"A.",L"\r\nA.");
+	source.Replace(L"B.",L"\r\nB.");
+	source.Replace(L"C.",L"\r\nC.");
+	source.Replace(L"D.",L"\r\nD.");
+	
+	source.Replace(L"Aï¼",L"\r\nAï¼");
+	source.Replace(L"Bï¼",L"\r\nBï¼");
+	source.Replace(L"Cï¼",L"\r\nCï¼");
+	source.Replace(L"Dï¼",L"\r\nDï¼");
+	//æ­£åˆ™å¤„ç†
 	 vector<wstring> result_title;
 	 vector<wstring> result_itemA;
 	 vector<wstring> result_itemB;
 	 vector<wstring> result_itemC;
 	 vector<wstring> result_itemD;
 		CommonParse(source,
-			    L"(\\d+[\\.\\£®].*)",//Title  L"(\\d+.*\r\n)",  
+			    L"(\\d+[\\.\\ï¼].*)",//Title  L"(\\d+.*\r\n)",  
 								//A (?<=\n)A.*(?=\n)
 								//B (\nB.*\r\n)
 								//C (\nC.*\r\n)
 								//D (\nB.*\r\n)
 			    result_title);
 		CommonParse(source,
-			    L"(A[\\.\\£®].*)",
+			    L"(A[\\.\\ï¼].*)",
 			    result_itemA);
 		CommonParse(source,
-			    L"(B[\\.\\£®].*)",
+			    L"(B[\\.\\ï¼].*)",
 			    result_itemB);
 		CommonParse(source,
-			    L"(C[\\.\\£®].*)",
+			    L"(C[\\.\\ï¼].*)",
 			    result_itemC);
 		CommonParse(source,
-			    L"(D[\\.\\£®].*)",
+			    L"(D[\\.\\ï¼].*)",
 			    result_itemD);
 
    for(int i=0;i<result_title.size();++i)
