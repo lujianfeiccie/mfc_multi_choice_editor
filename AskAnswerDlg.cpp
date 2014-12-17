@@ -71,7 +71,9 @@ UINT ThreadSaveInAskAnswer(LPVOID lPvoid)
 		xml.IntoElem();;
 		xml.AddElem(L"text");
 		xml.AddAttrib(L"tag",L"question");
-		xml.AddAttrib(L"value",model->m_ask);
+		CString ask = model->m_ask;
+		ask.Replace(L"\r\n",L"&#x0A;");
+		xml.AddAttrib(L"value",ask);
 		
 		xml.AddElem(L"text");
 		xml.AddAttrib(L"tag",L"answer");
@@ -317,6 +319,7 @@ void CAskAnswerDlg::OpenFile()
 			if(tag == L"question")
 			{
 				model->m_ask = xml.GetAttrib(L"value");
+				Util::AddReturnFromXml(model->m_ask);
 			}
 			else
 			{
